@@ -37,7 +37,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Test DB connection
-        run: psql postgres://root:gonuxtsecret@localhost:5432
+        run: make dbconn
 
 
 
