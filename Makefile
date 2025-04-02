@@ -30,4 +30,7 @@ dbmigratedown:
 test:
 	go test -v -cover ./...
 
-.PHONY: postgrescreate postgresremove dbcreate dbdrop dbconn dbmigrateup dbmigratedown 
+server: 
+	go run main.go
+
+.PHONY: postgrescreate postgresremove dbcreate dbdrop dbconn dbmigrateup dbmigratedown test server

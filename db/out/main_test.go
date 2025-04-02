@@ -2,21 +2,25 @@ package db
 
 import (
 	"database/sql"
-	_ "github.com/lib/pq"
 	"log"
 	"os"
 	"testing"
+
+	_ "github.com/lib/pq"
+	"github.com/noueii/gonuxt-starter/util"
 )
 
 var testQueries *Queries
 
-const (
-	dbDriver = "postgres"
-	dbSource = "postgres://root:gonuxtsecret@localhost:5432/gonuxt?sslmode=disable"
-)
-
 func TestMain(m *testing.M) {
-	conn, err := sql.Open(dbDriver, dbSource)
+
+	cfg, err := util.LoadConfig(util.Test, "../")
+
+	if err != nil {
+		log.Fatal("error loading environment variables: ", err)
+	}
+
+	conn, err := sql.Open(cfg.DbDriver, cfg.DbURL)
 
 	if err != nil {
 		log.Fatal("can't connect to db: ", err)
