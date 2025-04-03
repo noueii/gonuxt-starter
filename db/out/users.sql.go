@@ -13,20 +13,26 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users(
-	name
+	name, hashed_password
 ) VALUES (
-	$1
-) RETURNING id, created_at, updated_at, name, balance
+	$1, $2
+) RETURNING id, created_at, updated_at, name, hashed_password, balance
 `
 
-func (q *Queries) CreateUser(ctx context.Context, name string) (User, error) {
-	row := q.queryRow(ctx, q.createUserStmt, createUser, name)
+type CreateUserParams struct {
+	Name           string `json:"name"`
+	HashedPassword string `json:"hashed_password"`
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+	row := q.queryRow(ctx, q.createUserStmt, createUser, arg.Name, arg.HashedPassword)
 	var i User
 	err := row.Scan(
 		&i.ID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,
+		&i.HashedPassword,
 		&i.Balance,
 	)
 	return i, err
@@ -42,7 +48,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, created_at, updated_at, name, balance FROM users WHERE id = $1 LIMIT 1
+SELECT id, created_at, updated_at, name, hashed_password, balance FROM users WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
@@ -53,6 +59,7 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,
+		&i.HashedPassword,
 		&i.Balance,
 	)
 	return i, err
@@ -62,7 +69,7 @@ const updateUserBalance = `-- name: UpdateUserBalance :one
 UPDATE users
 SET balance = $2
 WHERE id = $1
-RETURNING id, created_at, updated_at, name, balance
+RETURNING id, created_at, updated_at, name, hashed_password, balance
 `
 
 type UpdateUserBalanceParams struct {
@@ -78,6 +85,7 @@ func (q *Queries) UpdateUserBalance(ctx context.Context, arg UpdateUserBalancePa
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,
+		&i.HashedPassword,
 		&i.Balance,
 	)
 	return i, err

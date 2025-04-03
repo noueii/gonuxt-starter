@@ -42,45 +42,43 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 
 	envars, err := godotenv.Read(filePath)
 
-	var cfg Config
-
 	if err != nil {
-		return &Config{}, err
+		return nil, err
 	}
 
 	dbDriver, ok := envars["DB_DRIVER"]
 	if !ok || len(dbDriver) == 0 {
-		return &cfg, fmt.Errorf("%s environment variable 'DB_DRIVER' not found", env)
+		return nil, fmt.Errorf("%s environment variable 'DB_DRIVER' not found", env)
 	}
 
 	dbUser, ok := envars["DB_USER"]
 	if !ok || len(dbUser) == 0 {
-		return &cfg, fmt.Errorf("%s environment variable 'DB_USER' not found", env)
+		return nil, fmt.Errorf("%s environment variable 'DB_USER' not found", env)
 	}
 
 	dbPassword, ok := envars["DB_PASSWORD"]
 	if !ok || len(dbPassword) == 0 {
-		return &cfg, fmt.Errorf("%s environment variable 'DB_PASSWORD' not found", env)
+		return nil, fmt.Errorf("%s environment variable 'DB_PASSWORD' not found", env)
 	}
 
 	dbHost, ok := envars["DB_HOST"]
 	if !ok || len(dbHost) == 0 {
-		return &cfg, fmt.Errorf("%s environment variable 'DB_HOST' not found", env)
+		return nil, fmt.Errorf("%s environment variable 'DB_HOST' not found", env)
 	}
 
 	dbPort, ok := envars["DB_PORT"]
 	if !ok || len(dbPort) == 0 {
-		return &cfg, fmt.Errorf("%s environment variable 'DB_PORT' not found", env)
+		return nil, fmt.Errorf("%s environment variable 'DB_PORT' not found", env)
 	}
 
 	dbName, ok := envars["DB_NAME"]
 	if !ok || len(dbName) == 0 {
-		return &cfg, fmt.Errorf("%s environment variable 'DB_NAME' not found", env)
+		return nil, fmt.Errorf("%s environment variable 'DB_NAME' not found", env)
 	}
 
 	dbSSLConnectionString, ok := envars["DB_SSL_ENABLE"]
 	if !ok || len(dbSSLConnectionString) == 0 {
-		return &cfg, fmt.Errorf("%s environment variable 'DB_SSL_ENABLE' not found", env)
+		return nil, fmt.Errorf("%s environment variable 'DB_SSL_ENABLE' not found", env)
 	}
 
 	dbSSLConnection, err := strconv.ParseBool(dbSSLConnectionString)
@@ -88,7 +86,7 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 	dbURL := fmt.Sprintf("%s://%s:%s@%s:%s/%s", dbDriver, dbUser, dbPassword, dbHost, dbPort, dbName)
 
 	if err != nil {
-		return &cfg, err
+		return nil, err
 	}
 
 	if !dbSSLConnection {
@@ -97,12 +95,12 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 
 	httpHost, ok := envars["HTTP_HOST"]
 	if !ok || len(httpHost) == 0 {
-		return &cfg, fmt.Errorf("%s environment variable 'HTTP_HOST' not found", env)
+		return nil, fmt.Errorf("%s environment variable 'HTTP_HOST' not found", env)
 	}
 
 	httpPort, ok := envars["HTTP_PORT"]
 	if !ok || len(httpPort) == 0 {
-		return &cfg, fmt.Errorf("%s environment variable 'HTTP_PORT' not found", env)
+		return nil, fmt.Errorf("%s environment variable 'HTTP_PORT' not found", env)
 	}
 
 	httpAddr := fmt.Sprintf("%s:%s", httpHost, httpPort)

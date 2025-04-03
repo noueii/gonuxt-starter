@@ -7,10 +7,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	db "github.com/noueii/gonuxt-starter/db/out"
+	"github.com/noueii/gonuxt-starter/util"
 )
 
 type createUserRequest struct {
-	Name string `json:"name" binding:"required"`
+	Name     string `json:"name" binding:"required,alphanum,min=1"`
+	Password string `json:"password" binding:"required,min=8"`
 }
 
 func (s *Server) createUser(ctx *gin.Context) {
@@ -22,8 +25,19 @@ func (s *Server) createUser(ctx *gin.Context) {
 	}
 
 	name := req.Name
+	password := req.Password
+	hashedPassword, err := util.HashPassword(password)
 
-	user, err := s.db.CreateUser(ctx, name)
+	if err != nil {
+		fmt.Println(err.Error())
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	user, err := s.db.CreateUser(ctx, db.CreateUserParams{
+		Name:           name,
+		HashedPassword: hashedPassword,
+	})
 	if err != nil {
 		fmt.Println(err.Error())
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
