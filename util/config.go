@@ -3,22 +3,25 @@ package util
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	DbDriver        string
-	DbUser          string
-	DbPassword      string
-	DbHost          string
-	DbPort          string
-	DbName          string
-	DbSSLConnection bool
-	DbURL           string
-	HTTPHost        string
-	HTTPPort        string
-	HTTPAddr        string
+	DbDriver            string
+	DbUser              string
+	DbPassword          string
+	DbHost              string
+	DbPort              string
+	DbName              string
+	DbSSLConnection     bool
+	DbURL               string
+	HTTPHost            string
+	HTTPPort            string
+	HTTPAddr            string
+	TokenSymmetricKey   string
+	TokenAccessDuration time.Duration
 }
 
 type ENV string
@@ -105,17 +108,38 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 
 	httpAddr := fmt.Sprintf("%s:%s", httpHost, httpPort)
 
+	tokenSymmetricKey, ok := envars["TOKEN_SYMMETRIC_KEY"]
+	if !ok {
+		return nil, fmt.Errorf("%s environment variable 'TOKEN_SYMMETRIC_KEY' not found", env)
+	}
+
+	if len(tokenSymmetricKey) != 32 {
+		return nil, fmt.Errorf("%s environment variable 'TOKEN_SYMMETRIC_KEY' has invalid length", env)
+	}
+
+	tokenAccessDurationString, ok := envars["TOKEN_ACCESS_DURATION"]
+	if !ok || len(tokenAccessDurationString) == 0 {
+		return nil, fmt.Errorf("%s environment variable 'TOKEN_ACCESS_DURATION' not found", env)
+	}
+
+	tokenAccessDuration, err := time.ParseDuration(tokenAccessDurationString)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Config{
-		DbDriver:        dbDriver,
-		DbUser:          dbUser,
-		DbPassword:      dbPassword,
-		DbHost:          dbHost,
-		DbPort:          dbPort,
-		DbName:          dbName,
-		DbSSLConnection: dbSSLConnection,
-		DbURL:           dbURL,
-		HTTPHost:        httpHost,
-		HTTPPort:        httpPort,
-		HTTPAddr:        httpAddr,
+		DbDriver:            dbDriver,
+		DbUser:              dbUser,
+		DbPassword:          dbPassword,
+		DbHost:              dbHost,
+		DbPort:              dbPort,
+		DbName:              dbName,
+		DbSSLConnection:     dbSSLConnection,
+		DbURL:               dbURL,
+		HTTPHost:            httpHost,
+		HTTPPort:            httpPort,
+		HTTPAddr:            httpAddr,
+		TokenSymmetricKey:   tokenSymmetricKey,
+		TokenAccessDuration: tokenAccessDuration,
 	}, nil
 }

@@ -17,6 +17,7 @@ SET balance = $2
 WHERE id = $1
 RETURNING *;
 
-
+-- name: GetUserByName :one
+SELECT * FROM users WHERE name = $1 LIMIT 1;
 
 

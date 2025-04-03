@@ -3,22 +3,40 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	db "github.com/noueii/gonuxt-starter/db/out"
+	"github.com/noueii/gonuxt-starter/token"
+	"github.com/noueii/gonuxt-starter/util"
 )
 
 type Server struct {
-	db     *db.Queries
-	router *gin.Engine
+	config     *util.Config
+	db         *db.Queries
+	router     *gin.Engine
+	tokenMaker token.Maker
 }
 
-func NewServer(db *db.Queries) *Server {
-	server := &Server{db: db}
+func NewServer(config *util.Config, db *db.Queries) (*Server, error) {
+	tokenMaker, err := token.NewJWTMaker(config.TokenSymmetricKey)
+
+	if err != nil {
+		return nil, err
+	}
+
+	server := &Server{
+		db:         db,
+		config:     config,
+		tokenMaker: tokenMaker,
+	}
 	router := gin.Default()
 
 	router.POST("/users", server.createUser)
-	router.GET("/users/:id", server.getAccountById)
+	router.POST("/users/login", server.LoginUser)
+
+	authRoutes := router.Group("/").Use(authMiddleware(tokenMaker))
+
+	authRoutes.GET("/users/:id", server.getUserById)
 	server.router = router
 
-	return server
+	return server, nil
 }
 
 func errorResponse(err error) gin.H {

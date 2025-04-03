@@ -27,7 +27,11 @@ func main() {
 	}
 
 	queries := db.New(conn)
-	httpServer := api.NewServer(queries)
+	httpServer, err := api.NewServer(cfg, queries)
+
+	if err != nil {
+		log.Fatal("cannot create http server:", err)
+	}
 
 	err = httpServer.Start(cfg.HTTPAddr)
 	if err != nil {

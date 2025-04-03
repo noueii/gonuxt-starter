@@ -33,6 +33,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getUserByIdStmt, err = db.PrepareContext(ctx, getUserById); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserById: %w", err)
 	}
+	if q.getUserByNameStmt, err = db.PrepareContext(ctx, getUserByName); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUserByName: %w", err)
+	}
 	if q.updateUserBalanceStmt, err = db.PrepareContext(ctx, updateUserBalance); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateUserBalance: %w", err)
 	}
@@ -54,6 +57,11 @@ func (q *Queries) Close() error {
 	if q.getUserByIdStmt != nil {
 		if cerr := q.getUserByIdStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getUserByIdStmt: %w", cerr)
+		}
+	}
+	if q.getUserByNameStmt != nil {
+		if cerr := q.getUserByNameStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUserByNameStmt: %w", cerr)
 		}
 	}
 	if q.updateUserBalanceStmt != nil {
@@ -103,6 +111,7 @@ type Queries struct {
 	createUserStmt        *sql.Stmt
 	deleteUserStmt        *sql.Stmt
 	getUserByIdStmt       *sql.Stmt
+	getUserByNameStmt     *sql.Stmt
 	updateUserBalanceStmt *sql.Stmt
 }
 
@@ -113,6 +122,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		createUserStmt:        q.createUserStmt,
 		deleteUserStmt:        q.deleteUserStmt,
 		getUserByIdStmt:       q.getUserByIdStmt,
+		getUserByNameStmt:     q.getUserByNameStmt,
 		updateUserBalanceStmt: q.updateUserBalanceStmt,
 	}
 }
