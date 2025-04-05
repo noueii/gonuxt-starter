@@ -20,6 +20,9 @@ type Config struct {
 	HTTPHost             string
 	HTTPPort             string
 	HTTPAddr             string
+	GRPCHost             string
+	GRPCPort             string
+	GRPCAddr             string
 	TokenSymmetricKey    string
 	TokenAccessDuration  time.Duration
 	TokenRefreshDuration time.Duration
@@ -138,6 +141,18 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		return nil, err
 	}
 
+	grpcHost, ok := envars["GRPC_HOST"]
+	if !ok || len(grpcHost) == 0 {
+		return nil, fmt.Errorf("%s environment variable 'GRPC_HOST' not found", env)
+	}
+
+	grpcPort, ok := envars["GRPC_PORT"]
+	if !ok || len(grpcPort) == 0 {
+		return nil, fmt.Errorf("%s environment variable 'GRPC_PORT' not found", env)
+	}
+
+	grpcAddr := fmt.Sprintf("%s:%s", grpcHost, grpcPort)
+
 	return &Config{
 		DbDriver:             dbDriver,
 		DbUser:               dbUser,
@@ -150,6 +165,9 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		HTTPHost:             httpHost,
 		HTTPPort:             httpPort,
 		HTTPAddr:             httpAddr,
+		GRPCHost:             grpcHost,
+		GRPCPort:             grpcPort,
+		GRPCAddr:             grpcAddr,
 		TokenSymmetricKey:    tokenSymmetricKey,
 		TokenAccessDuration:  tokenAccessDuration,
 		TokenRefreshDuration: tokenRefreshDuration,

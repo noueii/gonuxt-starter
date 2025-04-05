@@ -33,4 +33,13 @@ test:
 server: 
 	go run main.go
 
-.PHONY: postgrescreate postgresremove dbcreate dbdrop dbconn dbmigrateup dbmigratedown test server
+proto:
+	rm -f pb/*.go
+	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
+	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
+	proto/*.proto
+
+evans: 
+	evans --host localhost --port 7777 -r repl
+
+.PHONY: postgrescreate postgresremove dbcreate dbdrop dbconn dbmigrateup dbmigratedown test server proto
