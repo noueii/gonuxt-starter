@@ -19,11 +19,13 @@ func main() {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+	fmt.Println("Connecting db")
 
 	conn, err := sql.Open(cfg.DbDriver, cfg.DbURL)
 
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
+		fmt.Println(err)
 	}
 
 	queries := db.New(conn)
@@ -31,11 +33,14 @@ func main() {
 
 	if err != nil {
 		log.Fatal("cannot create http server:", err)
+		fmt.Println(err)
 	}
 
+	fmt.Println("Starting server")
 	err = httpServer.Start(cfg.HTTPAddr)
 	if err != nil {
 		log.Fatal("cannot start http server:", err)
+		fmt.Println(err)
 	}
 
 }
