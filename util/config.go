@@ -9,19 +9,20 @@ import (
 )
 
 type Config struct {
-	DbDriver            string
-	DbUser              string
-	DbPassword          string
-	DbHost              string
-	DbPort              string
-	DbName              string
-	DbSSLConnection     bool
-	DbURL               string
-	HTTPHost            string
-	HTTPPort            string
-	HTTPAddr            string
-	TokenSymmetricKey   string
-	TokenAccessDuration time.Duration
+	DbDriver             string
+	DbUser               string
+	DbPassword           string
+	DbHost               string
+	DbPort               string
+	DbName               string
+	DbSSLConnection      bool
+	DbURL                string
+	HTTPHost             string
+	HTTPPort             string
+	HTTPAddr             string
+	TokenSymmetricKey    string
+	TokenAccessDuration  time.Duration
+	TokenRefreshDuration time.Duration
 }
 
 type ENV string
@@ -127,19 +128,30 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		return nil, err
 	}
 
+	tokenRefreshDurationString, ok := envars["TOKEN_REFRESH_DURATION"]
+	if !ok || len(tokenRefreshDurationString) == 0 {
+		return nil, fmt.Errorf("%s environment variable 'TOKEN_REFRESH_DURATION' not found", env)
+	}
+
+	tokenRefreshDuration, err := time.ParseDuration(tokenRefreshDurationString)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Config{
-		DbDriver:            dbDriver,
-		DbUser:              dbUser,
-		DbPassword:          dbPassword,
-		DbHost:              dbHost,
-		DbPort:              dbPort,
-		DbName:              dbName,
-		DbSSLConnection:     dbSSLConnection,
-		DbURL:               dbURL,
-		HTTPHost:            httpHost,
-		HTTPPort:            httpPort,
-		HTTPAddr:            httpAddr,
-		TokenSymmetricKey:   tokenSymmetricKey,
-		TokenAccessDuration: tokenAccessDuration,
+		DbDriver:             dbDriver,
+		DbUser:               dbUser,
+		DbPassword:           dbPassword,
+		DbHost:               dbHost,
+		DbPort:               dbPort,
+		DbName:               dbName,
+		DbSSLConnection:      dbSSLConnection,
+		DbURL:                dbURL,
+		HTTPHost:             httpHost,
+		HTTPPort:             httpPort,
+		HTTPAddr:             httpAddr,
+		TokenSymmetricKey:    tokenSymmetricKey,
+		TokenAccessDuration:  tokenAccessDuration,
+		TokenRefreshDuration: tokenRefreshDuration,
 	}, nil
 }

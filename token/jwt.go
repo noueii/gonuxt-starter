@@ -26,16 +26,21 @@ func NewJWTMaker(secretKey string) (Maker, error) {
 	}, nil
 }
 
-func (m *JWTMaker) CreateToken(username string, duration time.Duration) (string, error) {
+func (m *JWTMaker) CreateToken(username string, duration time.Duration) (string, *Payload, error) {
 	payload, err := NewPayload(username, duration)
 
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
 
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 
-	return jwtToken.SignedString([]byte(m.secretKey))
+	signedToken, err := jwtToken.SignedString([]byte(m.secretKey))
+	if err != nil {
+		return "", nil, err
+	}
+
+	return signedToken, payload, nil
 }
 
 func (m *JWTMaker) VerifyToken(token string) (*Payload, error) {

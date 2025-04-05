@@ -24,11 +24,17 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
+	if q.createSessionStmt, err = db.PrepareContext(ctx, createSession); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateSession: %w", err)
+	}
 	if q.createUserStmt, err = db.PrepareContext(ctx, createUser); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateUser: %w", err)
 	}
 	if q.deleteUserStmt, err = db.PrepareContext(ctx, deleteUser); err != nil {
 		return nil, fmt.Errorf("error preparing query DeleteUser: %w", err)
+	}
+	if q.getSessionByIdStmt, err = db.PrepareContext(ctx, getSessionById); err != nil {
+		return nil, fmt.Errorf("error preparing query GetSessionById: %w", err)
 	}
 	if q.getUserByIdStmt, err = db.PrepareContext(ctx, getUserById); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserById: %w", err)
@@ -44,6 +50,11 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 
 func (q *Queries) Close() error {
 	var err error
+	if q.createSessionStmt != nil {
+		if cerr := q.createSessionStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createSessionStmt: %w", cerr)
+		}
+	}
 	if q.createUserStmt != nil {
 		if cerr := q.createUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createUserStmt: %w", cerr)
@@ -52,6 +63,11 @@ func (q *Queries) Close() error {
 	if q.deleteUserStmt != nil {
 		if cerr := q.deleteUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing deleteUserStmt: %w", cerr)
+		}
+	}
+	if q.getSessionByIdStmt != nil {
+		if cerr := q.getSessionByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getSessionByIdStmt: %w", cerr)
 		}
 	}
 	if q.getUserByIdStmt != nil {
@@ -108,8 +124,10 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 type Queries struct {
 	db                    DBTX
 	tx                    *sql.Tx
+	createSessionStmt     *sql.Stmt
 	createUserStmt        *sql.Stmt
 	deleteUserStmt        *sql.Stmt
+	getSessionByIdStmt    *sql.Stmt
 	getUserByIdStmt       *sql.Stmt
 	getUserByNameStmt     *sql.Stmt
 	updateUserBalanceStmt *sql.Stmt
@@ -119,8 +137,10 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
 		db:                    tx,
 		tx:                    tx,
+		createSessionStmt:     q.createSessionStmt,
 		createUserStmt:        q.createUserStmt,
 		deleteUserStmt:        q.deleteUserStmt,
+		getSessionByIdStmt:    q.getSessionByIdStmt,
 		getUserByIdStmt:       q.getUserByIdStmt,
 		getUserByNameStmt:     q.getUserByNameStmt,
 		updateUserBalanceStmt: q.updateUserBalanceStmt,
