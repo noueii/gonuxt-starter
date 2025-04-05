@@ -14,7 +14,7 @@ import (
 
 func main() {
 
-	cfg, err := util.LoadConfig(util.Production)
+	cfg, err := util.LoadConfig(util.Development)
 
 	if err != nil {
 		fmt.Println(err.Error())
