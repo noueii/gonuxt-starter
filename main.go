@@ -1,12 +1,15 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"log"
 	"net"
+	"net/http"
 
 	"fmt"
 
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	_ "github.com/lib/pq"
 	"github.com/noueii/gonuxt-starter/api"
 	db "github.com/noueii/gonuxt-starter/db/out"
@@ -15,6 +18,7 @@ import (
 	"github.com/noueii/gonuxt-starter/util"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func main() {
@@ -35,6 +39,7 @@ func main() {
 
 	queries := db.New(conn)
 
+	go runGatewayServer(cfg, queries)
 	runGRPCServer(cfg, queries)
 
 }
@@ -62,6 +67,46 @@ func runGRPCServer(config *util.Config, queries *db.Queries) {
 	if err != nil {
 		fmt.Println(err)
 		log.Fatal("failed to start gRPC server:", err)
+	}
+
+}
+
+func runGatewayServer(config *util.Config, queries *db.Queries) {
+	server, err := gapi.NewServer(config, queries)
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal("cannot create server:", err)
+	}
+
+	muxOption := runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{
+		MarshalOptions:   protojson.MarshalOptions{UseProtoNames: true},
+		UnmarshalOptions: protojson.UnmarshalOptions{DiscardUnknown: true},
+	})
+
+	grpcMux := runtime.NewServeMux(muxOption)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	err = pb.RegisterGoNuxtHandlerServer(ctx, grpcMux, server)
+	if err != nil {
+		log.Fatal("cannot register handler server:", err)
+	}
+
+	mux := http.NewServeMux()
+	mux.Handle("/", grpcMux)
+
+	listener, err := net.Listen("tcp", config.HTTPAddr)
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal("cannot create gRPC listener:", err)
+	}
+
+	log.Printf("starting HTTP gateway server at %s", listener.Addr().String())
+
+	err = http.Serve(listener, mux)
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal("failed to start HTTP gateway server:", err)
 	}
 
 }
