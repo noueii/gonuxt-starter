@@ -17,6 +17,7 @@ type Config struct {
 	DbName               string
 	DbSSLConnection      bool
 	DbURL                string
+	DBMigrationsLocation string
 	HTTPHost             string
 	HTTPPort             string
 	HTTPAddr             string
@@ -100,6 +101,11 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		dbURL += "?sslmode=disable"
 	}
 
+	dbMigrationsLocation, ok := envars["DB_MIGRATIONS_LOCATION"]
+	if !ok || len(dbMigrationsLocation) == 0 {
+		return nil, fmt.Errorf("%s environment valiable 'DB_MIGRATIONS_LOCATION' not found", env)
+	}
+
 	httpHost, ok := envars["HTTP_HOST"]
 	if !ok || len(httpHost) == 0 {
 		return nil, fmt.Errorf("%s environment variable 'HTTP_HOST' not found", env)
@@ -162,6 +168,7 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		DbName:               dbName,
 		DbSSLConnection:      dbSSLConnection,
 		DbURL:                dbURL,
+		DBMigrationsLocation: dbMigrationsLocation,
 		HTTPHost:             httpHost,
 		HTTPPort:             httpPort,
 		HTTPAddr:             httpAddr,
@@ -172,4 +179,23 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		TokenAccessDuration:  tokenAccessDuration,
 		TokenRefreshDuration: tokenRefreshDuration,
 	}, nil
+}
+
+func LoadEnv() (ENV, error) {
+	envs, err := godotenv.Read("app.env")
+
+	if err != nil {
+		return "", err
+	}
+
+	env, ok := envs["ENVIRONMENT"]
+	if !ok {
+		return "", fmt.Errorf("environment variable 'ENVIRONMENT' not found")
+	}
+
+	if env != string(Production) && env != string(Development) && env != string(Test) {
+		return "", fmt.Errorf("invalid environment variable 'ENVIRONMENT'")
+	}
+
+	return ENV(env), nil
 }

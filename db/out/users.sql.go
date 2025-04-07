@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -97,6 +98,37 @@ type UpdateUserBalanceParams struct {
 
 func (q *Queries) UpdateUserBalance(ctx context.Context, arg UpdateUserBalanceParams) (User, error) {
 	row := q.queryRow(ctx, q.updateUserBalanceStmt, updateUserBalance, arg.ID, arg.Balance)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Name,
+		&i.HashedPassword,
+		&i.Balance,
+	)
+	return i, err
+}
+
+const updateUserByName = `-- name: UpdateUserByName :one
+UPDATE users
+SET 
+	hashed_password = COALESCE($1, hashed_password),
+	balance = COALESCE($2, balance),
+	updated_at = NOW()
+WHERE 
+	name = $3
+RETURNING id, created_at, updated_at, name, hashed_password, balance
+`
+
+type UpdateUserByNameParams struct {
+	HashedPassword sql.NullString `json:"hashed_password"`
+	Balance        sql.NullInt32  `json:"balance"`
+	Name           string         `json:"name"`
+}
+
+func (q *Queries) UpdateUserByName(ctx context.Context, arg UpdateUserByNameParams) (User, error) {
+	row := q.queryRow(ctx, q.updateUserByNameStmt, updateUserByName, arg.HashedPassword, arg.Balance, arg.Name)
 	var i User
 	err := row.Scan(
 		&i.ID,

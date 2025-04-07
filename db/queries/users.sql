@@ -20,4 +20,12 @@ RETURNING *;
 -- name: GetUserByName :one
 SELECT * FROM users WHERE name = $1 LIMIT 1;
 
-
+-- name: UpdateUserByName :one
+UPDATE users
+SET 
+	hashed_password = COALESCE(sqlc.narg(hashed_password), hashed_password),
+	balance = COALESCE(sqlc.narg(balance), balance),
+	updated_at = NOW()
+WHERE 
+	name = sqlc.arg(name)
+RETURNING *;
