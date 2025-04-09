@@ -22,12 +22,12 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 
 	}
 
-	authPayload, err := server.authorizeUser(ctx)
+	authPayload, err := server.authorizeUser(ctx, []string{util.UserRole, util.AdminRole})
 	if err != nil {
 		return nil, unauthenticatedError(err)
 	}
 
-	if authPayload.Username != req.Username {
+	if authPayload.Role != util.AdminRole && authPayload.Username != req.Username {
 		return nil, status.Errorf(codes.PermissionDenied, "cannot update other user's data")
 	}
 

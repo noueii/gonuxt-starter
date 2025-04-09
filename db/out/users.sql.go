@@ -17,7 +17,7 @@ INSERT INTO users(
 	name, hashed_password
 ) VALUES (
 	$1, $2
-) RETURNING id, created_at, updated_at, name, hashed_password, balance
+) RETURNING id, role, created_at, updated_at, name, hashed_password, balance
 `
 
 type CreateUserParams struct {
@@ -30,6 +30,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Role,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,
@@ -49,7 +50,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
 }
 
 const getUserById = `-- name: GetUserById :one
-SELECT id, created_at, updated_at, name, hashed_password, balance FROM users WHERE id = $1 LIMIT 1
+SELECT id, role, created_at, updated_at, name, hashed_password, balance FROM users WHERE id = $1 LIMIT 1
 `
 
 func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
@@ -57,6 +58,7 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Role,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,
@@ -67,7 +69,7 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (User, error) {
 }
 
 const getUserByName = `-- name: GetUserByName :one
-SELECT id, created_at, updated_at, name, hashed_password, balance FROM users WHERE name = $1 LIMIT 1
+SELECT id, role, created_at, updated_at, name, hashed_password, balance FROM users WHERE name = $1 LIMIT 1
 `
 
 func (q *Queries) GetUserByName(ctx context.Context, name string) (User, error) {
@@ -75,6 +77,7 @@ func (q *Queries) GetUserByName(ctx context.Context, name string) (User, error) 
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Role,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,
@@ -88,7 +91,7 @@ const updateUserBalance = `-- name: UpdateUserBalance :one
 UPDATE users
 SET balance = $2
 WHERE id = $1
-RETURNING id, created_at, updated_at, name, hashed_password, balance
+RETURNING id, role, created_at, updated_at, name, hashed_password, balance
 `
 
 type UpdateUserBalanceParams struct {
@@ -101,6 +104,7 @@ func (q *Queries) UpdateUserBalance(ctx context.Context, arg UpdateUserBalancePa
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Role,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,
@@ -118,7 +122,7 @@ SET
 	updated_at = NOW()
 WHERE 
 	name = $3
-RETURNING id, created_at, updated_at, name, hashed_password, balance
+RETURNING id, role, created_at, updated_at, name, hashed_password, balance
 `
 
 type UpdateUserByNameParams struct {
@@ -132,6 +136,7 @@ func (q *Queries) UpdateUserByName(ctx context.Context, arg UpdateUserByNamePara
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Role,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.Name,

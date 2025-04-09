@@ -29,12 +29,12 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		return nil, status.Errorf(codes.Unauthenticated, "authentication failed: %s", err)
 	}
 
-	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.Name, server.config.TokenAccessDuration)
+	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.Name, user.Role, server.config.TokenAccessDuration)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create access token: %s", err)
 	}
 
-	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(user.Name, server.config.TokenRefreshDuration)
+	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(user.Name, user.Role, server.config.TokenRefreshDuration)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create refresh token: %s", err)
 	}

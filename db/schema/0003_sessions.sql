@@ -16,4 +16,4 @@ CREATE TABLE sessions(
 );
 
 -- +goose Down
-DROP TABLE sessions();
+DROP TABLE sessions;
