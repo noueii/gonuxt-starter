@@ -4,9 +4,12 @@ import (
 	"context"
 	"database/sql"
 	"embed"
+	"errors"
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"fmt"
 
@@ -20,6 +23,7 @@ import (
 	"github.com/pressly/goose/v3"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -28,16 +32,25 @@ import (
 //go:embed db/schema/*.sql
 var embedMigrations embed.FS
 
+var interruptSignals = []os.Signal{
+	os.Interrupt,
+	syscall.SIGTERM,
+	syscall.SIGINT,
+}
+
 func main() {
 	environment, err := util.LoadEnv()
+
+	if err != nil {
+		log.Fatal().Err(err).Msg("could not load environment")
+	}
 
 	if environment == util.Development {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 
-	if err != nil {
-		log.Fatal().Err(err).Msg("could not load environment")
-	}
+	ctx, stop := signal.NotifyContext(context.Background(), interruptSignals...)
+	defer stop()
 
 	cfg, err := util.LoadConfig(environment)
 
@@ -58,8 +71,15 @@ func main() {
 
 	queries := db.New(conn)
 
-	go runGatewayServer(cfg, queries)
-	runGRPCServer(cfg, queries)
+	waitGroup, ctx := errgroup.WithContext(ctx)
+
+	runGatewayServer(ctx, waitGroup, cfg, queries)
+	runGRPCServer(ctx, waitGroup, cfg, queries)
+
+	err = waitGroup.Wait()
+	if err != nil {
+		log.Fatal().Err(err).Msg("wait group error")
+	}
 
 }
 
@@ -75,7 +95,7 @@ func runMigrations(config *util.Config, db *sql.DB) error {
 	return nil
 }
 
-func runGRPCServer(config *util.Config, queries *db.Queries) {
+func runGRPCServer(ctx context.Context, waitGroup *errgroup.Group, config *util.Config, queries *db.Queries) {
 	server, err := gapi.NewServer(config, queries)
 	if err != nil {
 		fmt.Println(err)
@@ -93,17 +113,35 @@ func runGRPCServer(config *util.Config, queries *db.Queries) {
 		log.Fatal().Err(err).Msg("cannot create gRPC listener:")
 	}
 
-	log.Printf("starting gRPC server at %s", listener.Addr().String())
+	waitGroup.Go(func() error {
+		log.Info().Msgf("starting gRPC server at %s", listener.Addr().String())
+		err = grpcServer.Serve(listener)
 
-	err = grpcServer.Serve(listener)
-	if err != nil {
-		fmt.Println(err)
-		log.Fatal().Err(err).Msg("failed to start gRPC server:")
-	}
+		if err != nil {
+			if errors.Is(err, grpc.ErrServerStopped) {
+				return nil
+			}
+
+			log.Fatal().Err(err).Msg("cannot start gRPC server")
+			return err
+		}
+
+		return nil
+	})
+
+	waitGroup.Go(func() error {
+		<-ctx.Done()
+		log.Info().Msg("gracefully shutting down gRPC server")
+
+		grpcServer.GracefulStop()
+		log.Info().Msg("gRPC server shutdown")
+
+		return nil
+	})
 
 }
 
-func runGatewayServer(config *util.Config, queries *db.Queries) {
+func runGatewayServer(ctx context.Context, waitGroup *errgroup.Group, config *util.Config, queries *db.Queries) {
 	server, err := gapi.NewServer(config, queries)
 	if err != nil {
 		fmt.Println(err)
@@ -116,8 +154,6 @@ func runGatewayServer(config *util.Config, queries *db.Queries) {
 	})
 
 	grpcMux := runtime.NewServeMux(muxOption)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	err = pb.RegisterGoNuxtHandlerServer(ctx, grpcMux, server)
 	if err != nil {
@@ -127,25 +163,47 @@ func runGatewayServer(config *util.Config, queries *db.Queries) {
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
 
-	listener, err := net.Listen("tcp", config.HTTPAddr)
-	if err != nil {
-		fmt.Println(err)
-		log.Fatal().Err(err).Msg("cannot create gRPC listener:")
+	httpServer := &http.Server{
+		Handler: gapi.HttpLogger(mux),
+		Addr:    config.HTTPAddr,
 	}
 
-	log.Info().Msgf("starting HTTP gateway server at %s", listener.Addr().String())
+	waitGroup.Go(func() error {
+		log.Info().Msgf("starting HTTP gateway server at %s", httpServer.Addr)
 
-	handler := gapi.HttpLogger(mux)
+		err = httpServer.ListenAndServe()
 
-	err = http.Serve(listener, handler)
-	if err != nil {
-		fmt.Println(err)
-		log.Fatal().Err(err).Msg("failed to start HTTP gateway server:")
-	}
+		if err != nil {
+			if errors.Is(err, http.ErrServerClosed) {
+				return nil
+			}
+
+			fmt.Println(err)
+			log.Error().Err(err).Msg("failed to start HTTP gateway server:")
+			return err
+		}
+
+		return nil
+
+	})
+
+	waitGroup.Go(func() error {
+		<-ctx.Done()
+		log.Info().Msg("gracefully shutting down HTTP gateway server")
+
+		err = httpServer.Shutdown(context.Background())
+
+		if err != nil {
+			log.Error().Err(err).Msg("failed to shutdown HTTP gateway server")
+			return err
+		}
+
+		return nil
+	})
 
 }
 
-func runGinServer(config *util.Config, queries *db.Queries) {
+func runGinServer(ctx context.Context, waitGroup *errgroup.Group, config *util.Config, queries *db.Queries) {
 	httpServer, err := api.NewServer(config, queries)
 
 	if err != nil {
@@ -153,10 +211,33 @@ func runGinServer(config *util.Config, queries *db.Queries) {
 		fmt.Println(err)
 	}
 
-	fmt.Println("Starting server")
-	err = httpServer.Start(config.HTTPAddr)
-	if err != nil {
-		log.Fatal().Err(err).Msg("cannot start http server:")
-		fmt.Println(err)
-	}
+	waitGroup.Go(func() error {
+		fmt.Println("Starting server")
+		err = httpServer.Start(config.HTTPAddr)
+
+		if err != nil {
+			log.Fatal().Err(err).Msg("cannot start HTTP server")
+			return err
+		}
+
+		return nil
+	})
+
+	waitGroup.Go(func() error {
+		<-ctx.Done()
+		log.Info().Msg("gracefully shutting down HTTP server")
+
+		err = httpServer.Shutdown()
+		if err != nil {
+			if errors.Is(err, http.ErrServerClosed) {
+				return nil
+			}
+
+			log.Error().Err(err).Msg("could not shutdown HTTP server")
+			return err
+		}
+
+		return nil
+	})
+
 }
