@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -27,6 +28,7 @@ type Config struct {
 	TokenSymmetricKey    string
 	TokenAccessDuration  time.Duration
 	TokenRefreshDuration time.Duration
+	CORSAllowedOrigins   []string
 }
 
 type ENV string
@@ -159,6 +161,14 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 
 	grpcAddr := fmt.Sprintf("%s:%s", grpcHost, grpcPort)
 
+	corsAllowedOriginsString, ok := envars["CORS_ORIGINS"]
+
+	if !ok || len(corsAllowedOriginsString) == 0 {
+		return nil, fmt.Errorf("%s environment variable 'CORS_ORIGINS' not found", env)
+	}
+
+	corsAllowedOrigins := strings.Split(corsAllowedOriginsString, ",")
+
 	return &Config{
 		DbDriver:             dbDriver,
 		DbUser:               dbUser,
@@ -178,6 +188,7 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		TokenSymmetricKey:    tokenSymmetricKey,
 		TokenAccessDuration:  tokenAccessDuration,
 		TokenRefreshDuration: tokenRefreshDuration,
+		CORSAllowedOrigins:   corsAllowedOrigins,
 	}, nil
 }
 

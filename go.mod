@@ -47,6 +47,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.14.1 // indirect
+	github.com/rs/cors v1.11.1 // indirect
 	github.com/rs/zerolog v1.34.0 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect

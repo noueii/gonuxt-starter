@@ -21,6 +21,7 @@ import (
 	"github.com/noueii/gonuxt-starter/pb"
 	"github.com/noueii/gonuxt-starter/util"
 	"github.com/pressly/goose/v3"
+	"github.com/rs/cors"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/errgroup"
@@ -163,8 +164,26 @@ func runGatewayServer(ctx context.Context, waitGroup *errgroup.Group, config *ut
 	mux := http.NewServeMux()
 	mux.Handle("/", grpcMux)
 
+	crs := cors.New(cors.Options{
+		AllowedOrigins: config.CORSAllowedOrigins,
+		AllowedMethods: []string{
+			http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+		},
+		AllowedHeaders: []string{
+			"Authorization",
+			"Content-Type",
+		},
+		AllowCredentials: true,
+	})
+
+	corsHandler := crs.Handler(gapi.HttpLogger(mux))
+
 	httpServer := &http.Server{
-		Handler: gapi.HttpLogger(mux),
+		Handler: corsHandler,
 		Addr:    config.HTTPAddr,
 	}
 
