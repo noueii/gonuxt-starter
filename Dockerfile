@@ -6,19 +6,19 @@ RUN go build -o main main.go
 #2. Run stage
 FROM alpine:3.21
 WORKDIR /app
-RUN apk add --no-cache curl
-RUN curl -fsSL \
-	https://raw.githubusercontent.com/pressly/goose/master/install.sh |\
-	sh
+#RUN apk add --no-cache curl
+#RUN curl -fsSL \
+#	https://raw.githubusercontent.com/pressly/goose/master/install.sh |\
+#	sh
 
 
 COPY --from=builder /app/main .
 COPY prod.env .
 COPY test.env .
-COPY scripts/start.sh .
-COPY db/schema ./schema
+#COPY scripts/start.sh .
+COPY db/schema ./db/schema
 
 EXPOSE 8080
 CMD [ "/app/main" ]
-ENTRYPOINT [ "/app/start.sh" ]
+#ENTRYPOINT [ "/app/start.sh" ]
 

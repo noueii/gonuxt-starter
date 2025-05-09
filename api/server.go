@@ -47,3 +47,7 @@ func errorResponse(err error) gin.H {
 func (server *Server) Start(address string) error {
 	return server.router.Run(address)
 }
+
+func (server *Server) Shutdown() error {
+	return server.Shutdown()
+}

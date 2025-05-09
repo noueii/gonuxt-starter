@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -17,12 +18,17 @@ type Config struct {
 	DbName               string
 	DbSSLConnection      bool
 	DbURL                string
+	DBMigrationsLocation string
 	HTTPHost             string
 	HTTPPort             string
 	HTTPAddr             string
+	GRPCHost             string
+	GRPCPort             string
+	GRPCAddr             string
 	TokenSymmetricKey    string
 	TokenAccessDuration  time.Duration
 	TokenRefreshDuration time.Duration
+	CORSAllowedOrigins   []string
 }
 
 type ENV string
@@ -97,6 +103,11 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		dbURL += "?sslmode=disable"
 	}
 
+	dbMigrationsLocation, ok := envars["DB_MIGRATIONS_LOCATION"]
+	if !ok || len(dbMigrationsLocation) == 0 {
+		return nil, fmt.Errorf("%s environment valiable 'DB_MIGRATIONS_LOCATION' not found", env)
+	}
+
 	httpHost, ok := envars["HTTP_HOST"]
 	if !ok || len(httpHost) == 0 {
 		return nil, fmt.Errorf("%s environment variable 'HTTP_HOST' not found", env)
@@ -138,6 +149,26 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		return nil, err
 	}
 
+	grpcHost, ok := envars["GRPC_HOST"]
+	if !ok || len(grpcHost) == 0 {
+		return nil, fmt.Errorf("%s environment variable 'GRPC_HOST' not found", env)
+	}
+
+	grpcPort, ok := envars["GRPC_PORT"]
+	if !ok || len(grpcPort) == 0 {
+		return nil, fmt.Errorf("%s environment variable 'GRPC_PORT' not found", env)
+	}
+
+	grpcAddr := fmt.Sprintf("%s:%s", grpcHost, grpcPort)
+
+	corsAllowedOriginsString, ok := envars["CORS_ORIGINS"]
+
+	if !ok || len(corsAllowedOriginsString) == 0 {
+		return nil, fmt.Errorf("%s environment variable 'CORS_ORIGINS' not found", env)
+	}
+
+	corsAllowedOrigins := strings.Split(corsAllowedOriginsString, ",")
+
 	return &Config{
 		DbDriver:             dbDriver,
 		DbUser:               dbUser,
@@ -147,11 +178,35 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		DbName:               dbName,
 		DbSSLConnection:      dbSSLConnection,
 		DbURL:                dbURL,
+		DBMigrationsLocation: dbMigrationsLocation,
 		HTTPHost:             httpHost,
 		HTTPPort:             httpPort,
 		HTTPAddr:             httpAddr,
+		GRPCHost:             grpcHost,
+		GRPCPort:             grpcPort,
+		GRPCAddr:             grpcAddr,
 		TokenSymmetricKey:    tokenSymmetricKey,
 		TokenAccessDuration:  tokenAccessDuration,
 		TokenRefreshDuration: tokenRefreshDuration,
+		CORSAllowedOrigins:   corsAllowedOrigins,
 	}, nil
+}
+
+func LoadEnv() (ENV, error) {
+	envs, err := godotenv.Read("app.env")
+
+	if err != nil {
+		return "", err
+	}
+
+	env, ok := envs["ENVIRONMENT"]
+	if !ok {
+		return "", fmt.Errorf("environment variable 'ENVIRONMENT' not found")
+	}
+
+	if env != string(Production) && env != string(Development) && env != string(Test) {
+		return "", fmt.Errorf("invalid environment variable 'ENVIRONMENT'")
+	}
+
+	return ENV(env), nil
 }

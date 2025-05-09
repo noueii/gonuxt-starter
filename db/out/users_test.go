@@ -71,3 +71,29 @@ func TestDeleteUser(t *testing.T) {
 	require.EqualError(t, err, sql.ErrNoRows.Error())
 	require.Empty(t, notExistingUser)
 }
+
+func TestUpdateUserByName(t *testing.T) {
+	createdUser := createRandomUser(t)
+
+	newPassword := util.RandomString(10)
+	newHashedPassword, err := util.HashPassword(newPassword)
+	require.NoError(t, err)
+
+	newBalance := int32(util.RandomInt(0, 100))
+
+	updatedUser, err := testQueries.UpdateUserByName(context.Background(), UpdateUserByNameParams{
+		Name: createdUser.Name,
+		HashedPassword: sql.NullString{
+			String: newHashedPassword,
+			Valid:  true,
+		},
+		Balance: sql.NullInt32{
+			Int32: newBalance,
+			Valid: true,
+		},
+	})
+
+	require.NoError(t, err)
+	require.Equal(t, updatedUser.HashedPassword, newHashedPassword)
+	require.Equal(t, updatedUser.Balance, newBalance)
+}
