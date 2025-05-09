@@ -1,0 +1,258 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "rpc_create_user.proto",
+        "version": "version not set"
+    },
+    "tags": [
+        {
+            "name": "GoNuxt"
+        }
+    ],
+    "paths": {
+        "/v1/create_user": {
+            "post": {
+                "operationId": "GoNuxt_CreateUser",
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/pbCreateUserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/rpcStatus"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/pbCreateUserRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "tags": [
+                    "GoNuxt"
+                ]
+            }
+        },
+        "/v1/login_user": {
+            "post": {
+                "operationId": "GoNuxt_LoginUser",
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/pbLoginUserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/rpcStatus"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/pbLoginUserRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "tags": [
+                    "GoNuxt"
+                ]
+            }
+        },
+        "/v1/update_user": {
+            "patch": {
+                "operationId": "GoNuxt_UpdateUser",
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/pbUpdateUserResponse"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/rpcStatus"
+                                }
+                            }
+                        }
+                    }
+                },
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/pbUpdateUserRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "tags": [
+                    "GoNuxt"
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "pbCreateUserRequest": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "pbCreateUserResponse": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "$ref": "#/components/schemas/pbUser"
+                    }
+                }
+            },
+            "pbLoginUserRequest": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    }
+                }
+            },
+            "pbLoginUserResponse": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "$ref": "#/components/schemas/pbUser"
+                    },
+                    "sessionId": {
+                        "type": "string"
+                    },
+                    "accessToken": {
+                        "type": "string"
+                    },
+                    "accessTokenExpiresAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "refreshToken": {
+                        "type": "string"
+                    },
+                    "refreshTokenExpiresAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "pbUpdateUserRequest": {
+                "type": "object",
+                "properties": {
+                    "username": {
+                        "type": "string"
+                    },
+                    "password": {
+                        "type": "string"
+                    },
+                    "balance": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            },
+            "pbUpdateUserResponse": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "$ref": "#/components/schemas/pbUser"
+                    }
+                }
+            },
+            "pbUser": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    },
+                    "createdAt": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "protobufAny": {
+                "type": "object",
+                "properties": {
+                    "@type": {
+                        "type": "string"
+                    }
+                },
+                "additionalProperties": {}
+            },
+            "rpcStatus": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "details": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/protobufAny"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
