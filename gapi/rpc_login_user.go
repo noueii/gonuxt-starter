@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"time"
 
 	db "github.com/noueii/gonuxt-starter/db/out"
 	"github.com/noueii/gonuxt-starter/pb"
@@ -63,8 +62,6 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
 		User:                  convertUser(user),
 	}
-
-	time.Sleep(4 * time.Second)
 
 	return resp, nil
 }

@@ -1,7 +1,6 @@
 <template>
   <div>
-    <h1>Hello from layout!:</h1>
-    <main class="container">
+    <main class="container" className="flex flex-col">
       <slot />
     </main>
   </div>
