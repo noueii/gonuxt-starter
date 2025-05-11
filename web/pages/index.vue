@@ -1,7 +1,6 @@
 <template>
-  <div className='flex w-screen h-full items-center justify-center'>
-    <div className='w-96 h-96 flex flex-col'>
-
+  <div class='flex w-screen h-screen items-center justify-center'>
+    <div class='w-96  flex flex-col'>
       <AuthForm />
     </div>
 

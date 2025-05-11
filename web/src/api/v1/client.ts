@@ -27,7 +27,9 @@ const authMiddleware: Middleware = {
 }
 
 
-const client = createClient<paths>({ baseUrl: "http://localhost:8080/v1/" })
+
+
+const client = createClient<paths>({ baseUrl: "http://localhost:8080" })
 client.use(authMiddleware)
 
 export { client }
