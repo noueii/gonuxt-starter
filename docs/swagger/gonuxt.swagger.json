@@ -80,6 +80,38 @@
         ]
       }
     },
+    "/v1/refresh_token": {
+      "post": {
+        "operationId": "GoNuxt_RefreshToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbRefreshTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbRefreshTokenRequest"
+            }
+          }
+        ],
+        "tags": [
+          "GoNuxt"
+        ]
+      }
+    },
     "/v1/update_user": {
       "patch": {
         "operationId": "GoNuxt_UpdateUser",
@@ -150,20 +182,40 @@
         "user": {
           "$ref": "#/definitions/pbUser"
         },
-        "sessionId": {
+        "session_id": {
           "type": "string"
         },
-        "accessToken": {
+        "access_token": {
           "type": "string"
         },
-        "accessTokenExpiresAt": {
+        "access_token_expires_at": {
           "type": "string",
           "format": "date-time"
         },
-        "refreshToken": {
+        "refresh_token": {
           "type": "string"
         },
-        "refreshTokenExpiresAt": {
+        "refresh_token_expires_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbRefreshTokenRequest": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string"
+        }
+      }
+    },
+    "pbRefreshTokenResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "access_token_expires_at": {
           "type": "string",
           "format": "date-time"
         }
@@ -201,9 +253,12 @@
         "username": {
           "type": "string"
         },
-        "createdAt": {
+        "created_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "role": {
+          "type": "string"
         }
       }
     },

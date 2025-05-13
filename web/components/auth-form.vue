@@ -1,9 +1,18 @@
 <script setup lang="ts">
 
-import { client } from '~/src/api/v1/client'
+
+
+const { session, user, loggedIn } = useUserSession()
+const { $apiClient } = useNuxtApp()
+
+console.log(user.value)
+
 const variant = ref("signin")
 
-const authData = ref({
+
+
+
+const authData = reactive({
   username: '',
   password: '',
   confirmPassword: ''
@@ -18,58 +27,49 @@ function handleVariantChange() {
 }
 
 async function handleSubmit() {
-  const username = authData.value.username
-  const password = authData.value.password
-  const passwordConfirm = authData.value.confirmPassword
+  const { username, password, confirmPassword } = authData
 
-  console.log(`username: ${username}, password: ${password}, passwordConfirm: ${passwordConfirm}`)
-
-  if (!username || !password || (variant.value === "register" && !passwordConfirm)) {
+  if (!username || !password || (variant.value === "register" && !confirmPassword)) {
     return
   }
 
   if (variant.value === "signin") {
-    const res = await client.POST("/v1/login_user", {
+
+    const { response } = await $apiClient.POST('/v1/login_user', {
       body: {
-        username: username.toString(),
-        password: password.toString()
+        username: username,
+        password: password
       }
     })
 
-    console.log(res)
-
-    if (res?.error) {
-      alert(res.error.message)
-      return
+    if (response.ok) {
+      reloadNuxtApp({ path: '/' })
     }
 
 
-    const { data } = res
 
-    console.log(data)
+
+
+
   }
 
-  if (variant.value === "register") {
-    if (password !== passwordConfirm) {
-      alert("Passwords do not match")
-      return
+
+
+
+}
+
+async function handleUpdate() {
+
+  const { $apiClient } = useNuxtApp()
+  const res = await $apiClient.PATCH("/v1/update_user", {
+    body: {
+      balance: 40,
+      username: 'nxshappy',
+      password: 'razielsvenom'
     }
+  })
 
-    const res = await client.POST("/v1/create_user", {
-      body: {
-        username: username.toString(),
-        password: password.toString()
-      }
-    })
 
-    if (res?.error) {
-      alert(res.error.message)
-      return
-    }
-
-    const { data } = res
-    console.log(data)
-  }
 
 
 
@@ -78,6 +78,7 @@ async function handleSubmit() {
 
 <template>
   <form class='border-2 flex flex-col rounded-2xl p-4 w-full h-full gap-4' @submit.prevent="handleSubmit">
+    <h1 v-if='loggedIn'>{{ user?.username }}</h1>
     <h2 v-if='variant === "signin"'> Sign in </h2>
     <h2 v-if='variant === "register"'> Register</h2>
     <div class='flex flex-col gap-4'>
@@ -103,5 +104,6 @@ async function handleSubmit() {
       Already have an account ?
     </span>
     <Button type="submit"> Sign in </Button>
+    <Button @click="handleUpdate"> Update </Button>
   </form>
 </template>

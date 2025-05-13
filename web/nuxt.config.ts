@@ -13,7 +13,8 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@nuxt/test-utils',
     '@nuxt/ui',
-    'shadcn-nuxt'
+    'shadcn-nuxt',
+    'nuxt-auth-utils'
   ],
   vite: {
     plugins: [

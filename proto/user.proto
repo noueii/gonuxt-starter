@@ -11,4 +11,5 @@ message User {
   string id = 1;
   string username = 2;
   google.protobuf.Timestamp created_at = 3;
+  string role = 4;
 }

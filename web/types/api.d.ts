@@ -36,6 +36,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/refresh_token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["GoNuxt_RefreshToken"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/update_user": {
         parameters: {
             query?: never;
@@ -77,6 +93,14 @@ export interface components {
             /** Format: date-time */
             refresh_token_expires_at?: string;
         };
+        pbRefreshTokenRequest: {
+            refresh_token?: string;
+        };
+        pbRefreshTokenResponse: {
+            access_token?: string;
+            /** Format: date-time */
+            access_token_expires_at?: string;
+        };
         pbUpdateUserRequest: {
             username?: string;
             password?: string;
@@ -91,6 +115,7 @@ export interface components {
             username?: string;
             /** Format: date-time */
             created_at?: string;
+            role?: string;
         };
         protobufAny: {
             "@type"?: string;
@@ -165,6 +190,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["pbLoginUserResponse"];
+                };
+            };
+            /** @description An unexpected error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["rpcStatus"];
+                };
+            };
+        };
+    };
+    GoNuxt_RefreshToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["pbRefreshTokenRequest"];
+            };
+        };
+        responses: {
+            /** @description A successful response. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["pbRefreshTokenResponse"];
                 };
             };
             /** @description An unexpected error response. */
