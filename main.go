@@ -162,7 +162,11 @@ func runGatewayServer(ctx context.Context, waitGroup *errgroup.Group, config *ut
 	}
 
 	mux := http.NewServeMux()
-	mux.Handle("/", grpcMux)
+	mux.Handle("/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := context.WithValue(r.Context(), gapi.ResponseWriterKey, w)
+
+		grpcMux.ServeHTTP(w, r.WithContext(ctx))
+	}))
 
 	crs := cors.New(cors.Options{
 		AllowedOrigins: config.CORSAllowedOrigins,

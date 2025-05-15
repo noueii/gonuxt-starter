@@ -10,6 +10,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	unsafe "unsafe"
 )
@@ -25,20 +26,20 @@ var File_service_gonuxt_starter_proto protoreflect.FileDescriptor
 
 const file_service_gonuxt_starter_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservice_gonuxt_starter.proto\x12\x02pb\x1a\x15rpc_create_user.proto\x1a\x14rpc_login_user.proto\x1a\x15rpc_update_user.proto\x1a\x17rpc_refresh_token.proto\x1a\x1cgoogle/api/annotations.proto2\xf0\x02\n" +
+	"\x1cservice_gonuxt_starter.proto\x12\x02pb\x1a\x15rpc_create_user.proto\x1a\x14rpc_login_user.proto\x1a\x15rpc_update_user.proto\x1a\x17rpc_refresh_token.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto2\xec\x02\n" +
 	"\x06GoNuxt\x12W\n" +
 	"\n" +
 	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/create_user\x12S\n" +
 	"\tLoginUser\x12\x14.pb.LoginUserRequest\x1a\x15.pb.LoginUserResponse\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/login_user\x12W\n" +
 	"\n" +
-	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*2\x0f/v1/update_user\x12_\n" +
-	"\fRefreshToken\x12\x17.pb.RefreshTokenRequest\x1a\x18.pb.RefreshTokenResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/refresh_tokenB%Z#github.com/noueii/gonuxt-starter/pbb\x06proto3"
+	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*2\x0f/v1/update_user\x12[\n" +
+	"\fRefreshToken\x12\x16.google.protobuf.Empty\x1a\x18.pb.RefreshTokenResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/refresh_tokenB%Z#github.com/noueii/gonuxt-starter/pbb\x06proto3"
 
 var file_service_gonuxt_starter_proto_goTypes = []any{
 	(*CreateUserRequest)(nil),    // 0: pb.CreateUserRequest
 	(*LoginUserRequest)(nil),     // 1: pb.LoginUserRequest
 	(*UpdateUserRequest)(nil),    // 2: pb.UpdateUserRequest
-	(*RefreshTokenRequest)(nil),  // 3: pb.RefreshTokenRequest
+	(*emptypb.Empty)(nil),        // 3: google.protobuf.Empty
 	(*CreateUserResponse)(nil),   // 4: pb.CreateUserResponse
 	(*LoginUserResponse)(nil),    // 5: pb.LoginUserResponse
 	(*UpdateUserResponse)(nil),   // 6: pb.UpdateUserResponse
@@ -48,7 +49,7 @@ var file_service_gonuxt_starter_proto_depIdxs = []int32{
 	0, // 0: pb.GoNuxt.CreateUser:input_type -> pb.CreateUserRequest
 	1, // 1: pb.GoNuxt.LoginUser:input_type -> pb.LoginUserRequest
 	2, // 2: pb.GoNuxt.UpdateUser:input_type -> pb.UpdateUserRequest
-	3, // 3: pb.GoNuxt.RefreshToken:input_type -> pb.RefreshTokenRequest
+	3, // 3: pb.GoNuxt.RefreshToken:input_type -> google.protobuf.Empty
 	4, // 4: pb.GoNuxt.CreateUser:output_type -> pb.CreateUserResponse
 	5, // 5: pb.GoNuxt.LoginUser:output_type -> pb.LoginUserResponse
 	6, // 6: pb.GoNuxt.UpdateUser:output_type -> pb.UpdateUserResponse

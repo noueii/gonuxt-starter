@@ -91,7 +91,7 @@
             }
         },
         "/v1/refresh_token": {
-            "post": {
+            "get": {
                 "operationId": "GoNuxt_RefreshToken",
                 "responses": {
                     "200": {
@@ -114,16 +114,6 @@
                             }
                         }
                     }
-                },
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/pbRefreshTokenRequest"
-                            }
-                        }
-                    },
-                    "required": true
                 },
                 "tags": [
                     "GoNuxt"
@@ -225,14 +215,6 @@
                     "refresh_token_expires_at": {
                         "type": "string",
                         "format": "date-time"
-                    }
-                }
-            },
-            "pbRefreshTokenRequest": {
-                "type": "object",
-                "properties": {
-                    "refresh_token": {
-                        "type": "string"
                     }
                 }
             },

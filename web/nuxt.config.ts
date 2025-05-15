@@ -14,7 +14,7 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     '@nuxt/ui',
     'shadcn-nuxt',
-    'nuxt-auth-utils'
+    '@pinia/nuxt'
   ],
   vite: {
     plugins: [

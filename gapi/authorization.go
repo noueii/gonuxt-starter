@@ -22,7 +22,13 @@ func (server *Server) authorizeUser(ctx context.Context, accessibleRoles []strin
 
 	values := md.Get(authorizationHeader)
 	if len(values) == 0 {
-		return nil, fmt.Errorf("missing authorization header")
+		grpcMeta := server.getMetadata(ctx)
+		token := grpcMeta.AccessToken
+
+		values = []string{token}
+		if len(values) == 0 {
+			return nil, fmt.Errorf("missing authorization header")
+		}
 	}
 
 	authHeader := values[0]

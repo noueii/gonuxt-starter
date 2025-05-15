@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -32,7 +33,7 @@ type GoNuxtClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*CreateUserResponse, error)
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
-	RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+	RefreshToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 }
 
 type goNuxtClient struct {
@@ -73,7 +74,7 @@ func (c *goNuxtClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, op
 	return out, nil
 }
 
-func (c *goNuxtClient) RefreshToken(ctx context.Context, in *RefreshTokenRequest, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
+func (c *goNuxtClient) RefreshToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RefreshTokenResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RefreshTokenResponse)
 	err := c.cc.Invoke(ctx, GoNuxt_RefreshToken_FullMethodName, in, out, cOpts...)
@@ -90,7 +91,7 @@ type GoNuxtServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*CreateUserResponse, error)
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
-	RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error)
+	RefreshToken(context.Context, *emptypb.Empty) (*RefreshTokenResponse, error)
 	mustEmbedUnimplementedGoNuxtServer()
 }
 
@@ -110,7 +111,7 @@ func (UnimplementedGoNuxtServer) LoginUser(context.Context, *LoginUserRequest) (
 func (UnimplementedGoNuxtServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
-func (UnimplementedGoNuxtServer) RefreshToken(context.Context, *RefreshTokenRequest) (*RefreshTokenResponse, error) {
+func (UnimplementedGoNuxtServer) RefreshToken(context.Context, *emptypb.Empty) (*RefreshTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
 }
 func (UnimplementedGoNuxtServer) mustEmbedUnimplementedGoNuxtServer() {}
@@ -189,7 +190,7 @@ func _GoNuxt_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(i
 }
 
 func _GoNuxt_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RefreshTokenRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -201,7 +202,7 @@ func _GoNuxt_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: GoNuxt_RefreshToken_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(GoNuxtServer).RefreshToken(ctx, req.(*RefreshTokenRequest))
+		return srv.(GoNuxtServer).RefreshToken(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -43,9 +43,9 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        get: operations["GoNuxt_RefreshToken"];
         put?: never;
-        post: operations["GoNuxt_RefreshToken"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -92,9 +92,6 @@ export interface components {
             refresh_token?: string;
             /** Format: date-time */
             refresh_token_expires_at?: string;
-        };
-        pbRefreshTokenRequest: {
-            refresh_token?: string;
         };
         pbRefreshTokenResponse: {
             access_token?: string;
@@ -210,11 +207,7 @@ export interface operations {
             path?: never;
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["pbRefreshTokenRequest"];
-            };
-        };
+        requestBody?: never;
         responses: {
             /** @description A successful response. */
             200: {

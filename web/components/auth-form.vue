@@ -4,6 +4,7 @@
 
 const { session, user, loggedIn } = useUserSession()
 const { $apiClient } = useNuxtApp()
+const toast = useToast()
 
 console.log(user.value)
 
@@ -35,16 +36,29 @@ async function handleSubmit() {
 
   if (variant.value === "signin") {
 
-    const { response } = await $apiClient.POST('/v1/login_user', {
+    const { response, error } = await $apiClient.POST('/v1/login_user', {
       body: {
         username: username,
         password: password
       }
     })
 
-    if (response.ok) {
-      reloadNuxtApp({ path: '/' })
+
+
+    if (error) {
+      toast.add({
+        title: 'Server Error:',
+        description: error.message,
+        color: 'error'
+      })
+      return
     }
+
+    if (response.ok) {
+      //reloadNuxtApp({ path: '/' })
+    }
+
+
 
 
 
@@ -58,16 +72,42 @@ async function handleSubmit() {
 
 }
 
+async function handleRefresh() {
+  $apiClient.GET('/v1/refresh_token')
+}
+
 async function handleUpdate() {
 
-  const { $apiClient } = useNuxtApp()
-  const res = await $apiClient.PATCH("/v1/update_user", {
+  console.log('HELLO')
+  const { response, error } = await $apiClient.PATCH("/v1/update_user", {
     body: {
       balance: 40,
       username: 'nxshappy',
       password: 'razielsvenom'
     }
   })
+
+  console.log(error)
+  console.log(response)
+
+  if (error) {
+    toast.add({
+      title: 'Server Error:',
+      description: error.message,
+      color: 'error'
+    })
+
+  }
+
+  if (response.ok) {
+    console.log('OK RESPONSE')
+    toast.add({
+      id: 'user-data',
+      title: 'User updated',
+      description: 'Successfully updated user data',
+      color: 'success'
+    })
+  }
 
 
 
@@ -105,5 +145,6 @@ async function handleUpdate() {
     </span>
     <Button type="submit"> Sign in </Button>
     <Button @click="handleUpdate"> Update </Button>
+    <Button @click="handleRefresh"> Refresh </Button>
   </form>
 </template>

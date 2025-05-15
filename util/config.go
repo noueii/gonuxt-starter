@@ -29,6 +29,7 @@ type Config struct {
 	TokenAccessDuration  time.Duration
 	TokenRefreshDuration time.Duration
 	CORSAllowedOrigins   []string
+	Environment          ENV
 }
 
 type ENV string
@@ -189,6 +190,7 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		TokenAccessDuration:  tokenAccessDuration,
 		TokenRefreshDuration: tokenRefreshDuration,
 		CORSAllowedOrigins:   corsAllowedOrigins,
+		Environment:          env,
 	}, nil
 }
 

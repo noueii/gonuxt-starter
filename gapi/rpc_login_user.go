@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	"net/http"
 
 	db "github.com/noueii/gonuxt-starter/db/out"
 	"github.com/noueii/gonuxt-starter/pb"
@@ -61,6 +63,39 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		RefreshToken:          refreshToken,
 		RefreshTokenExpiresAt: timestamppb.New(refreshPayload.ExpiresAt),
 		User:                  convertUser(user),
+	}
+
+	if w, ok := GetResponseWriter(ctx); ok {
+		fmt.Println("FOUND RESPONSE WRITER")
+		secure := false
+		sameSite := http.SameSiteLaxMode
+
+		if server.config.Environment == util.Production {
+
+			fmt.Printf("PRODUCTION ENV, %s\n", server.config.Environment)
+			sameSite = http.SameSiteLaxMode
+			secure = true
+		}
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "access_token",
+			Value:    accessToken,
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   secure,
+			SameSite: sameSite,
+			Expires:  accessPayload.ExpiresAt,
+		})
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "refresh_token",
+			Value:    refreshToken,
+			Path:     "/v1/refresh_token",
+			HttpOnly: true,
+			Secure:   secure,
+			SameSite: sameSite,
+			Expires:  refreshPayload.ExpiresAt,
+		})
 	}
 
 	return resp, nil
