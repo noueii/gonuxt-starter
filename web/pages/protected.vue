@@ -3,7 +3,7 @@ definePageMeta({
   middleware: ['auth']
 })
 
-const { user } = useUserSession()
+const { user } = useAuthStore()
 
 </script>
 

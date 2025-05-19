@@ -1,8 +1,8 @@
 <script setup>
-const { loggedIn, clear } = useUserSession()
+const { loggedIn, logout } = useAuthStore()
 
 async function handleLogOut() {
-  await clear()
+  await logout()
   reloadNuxtApp()
 }
 </script>

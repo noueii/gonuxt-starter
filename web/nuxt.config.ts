@@ -14,7 +14,8 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
     '@nuxt/ui',
     'shadcn-nuxt',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
   ],
   vite: {
     plugins: [
@@ -25,5 +26,8 @@ export default defineNuxtConfig({
   shadcn: {
     prefix: '',
     componentDir: './components/ui'
+  },
+  pinia: {
+    storesDirs: ['./stores/**']
   }
 })

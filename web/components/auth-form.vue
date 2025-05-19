@@ -2,11 +2,10 @@
 
 
 
-const { session, user, loggedIn } = useUserSession()
 const { $apiClient } = useNuxtApp()
 const toast = useToast()
 
-console.log(user.value)
+const { refresh, loggedIn, user, login, register } = useAuthStore()
 
 const variant = ref("signin")
 
@@ -35,46 +34,19 @@ async function handleSubmit() {
   }
 
   if (variant.value === "signin") {
-
-    const { response, error } = await $apiClient.POST('/v1/login_user', {
-      body: {
-        username: username,
-        password: password
-      }
+    await login({
+      username, password
     })
 
-
-
-    if (error) {
-      toast.add({
-        title: 'Server Error:',
-        description: error.message,
-        color: 'error'
-      })
-      return
-    }
-
-    if (response.ok) {
-      //reloadNuxtApp({ path: '/' })
-    }
-
-
-
-
-
-
-
-
+    console.log('login done')
   }
 
-
-
-
+  if (variant.value === "register") {
+    register({ username, password, confirmPassword })
+  }
 }
 
-async function handleRefresh() {
-  $apiClient.GET('/v1/refresh_token')
-}
+
 
 async function handleUpdate() {
 
@@ -87,8 +59,7 @@ async function handleUpdate() {
     }
   })
 
-  console.log(error)
-  console.log(response)
+
 
   if (error) {
     toast.add({
@@ -145,6 +116,6 @@ async function handleUpdate() {
     </span>
     <Button type="submit"> Sign in </Button>
     <Button @click="handleUpdate"> Update </Button>
-    <Button @click="handleRefresh"> Refresh </Button>
+    <Button @click="refresh"> Refresh </Button>
   </form>
 </template>

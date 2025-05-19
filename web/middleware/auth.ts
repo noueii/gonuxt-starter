@@ -1,7 +1,8 @@
 export default defineNuxtRouteMiddleware((to, from) => {
-  const { loggedIn } = useUserSession()
-  console.log(`logged in: ${loggedIn.value}`)
-  if (!loggedIn.value) {
+  const pinia = usePinia()
+  const { loggedIn } = useAuthStore(pinia)
+  console.log(`logged in: ${loggedIn}`)
+  if (!loggedIn) {
     return navigateTo('/auth')
   }
 })
