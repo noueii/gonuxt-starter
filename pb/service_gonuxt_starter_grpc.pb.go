@@ -24,6 +24,7 @@ const (
 	GoNuxt_LoginUser_FullMethodName    = "/pb.GoNuxt/LoginUser"
 	GoNuxt_UpdateUser_FullMethodName   = "/pb.GoNuxt/UpdateUser"
 	GoNuxt_RefreshToken_FullMethodName = "/pb.GoNuxt/RefreshToken"
+	GoNuxt_VerifyToken_FullMethodName  = "/pb.GoNuxt/VerifyToken"
 )
 
 // GoNuxtClient is the client API for GoNuxt service.
@@ -34,6 +35,7 @@ type GoNuxtClient interface {
 	LoginUser(ctx context.Context, in *LoginUserRequest, opts ...grpc.CallOption) (*LoginUserResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	RefreshToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
+	VerifyToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*VerifyTokenResponse, error)
 }
 
 type goNuxtClient struct {
@@ -84,6 +86,16 @@ func (c *goNuxtClient) RefreshToken(ctx context.Context, in *emptypb.Empty, opts
 	return out, nil
 }
 
+func (c *goNuxtClient) VerifyToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*VerifyTokenResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(VerifyTokenResponse)
+	err := c.cc.Invoke(ctx, GoNuxt_VerifyToken_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GoNuxtServer is the server API for GoNuxt service.
 // All implementations must embed UnimplementedGoNuxtServer
 // for forward compatibility.
@@ -92,6 +104,7 @@ type GoNuxtServer interface {
 	LoginUser(context.Context, *LoginUserRequest) (*LoginUserResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	RefreshToken(context.Context, *emptypb.Empty) (*RefreshTokenResponse, error)
+	VerifyToken(context.Context, *emptypb.Empty) (*VerifyTokenResponse, error)
 	mustEmbedUnimplementedGoNuxtServer()
 }
 
@@ -113,6 +126,9 @@ func (UnimplementedGoNuxtServer) UpdateUser(context.Context, *UpdateUserRequest)
 }
 func (UnimplementedGoNuxtServer) RefreshToken(context.Context, *emptypb.Empty) (*RefreshTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RefreshToken not implemented")
+}
+func (UnimplementedGoNuxtServer) VerifyToken(context.Context, *emptypb.Empty) (*VerifyTokenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method VerifyToken not implemented")
 }
 func (UnimplementedGoNuxtServer) mustEmbedUnimplementedGoNuxtServer() {}
 func (UnimplementedGoNuxtServer) testEmbeddedByValue()                {}
@@ -207,6 +223,24 @@ func _GoNuxt_RefreshToken_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GoNuxt_VerifyToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoNuxtServer).VerifyToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoNuxt_VerifyToken_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoNuxtServer).VerifyToken(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GoNuxt_ServiceDesc is the grpc.ServiceDesc for GoNuxt service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -229,6 +263,10 @@ var GoNuxt_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RefreshToken",
 			Handler:    _GoNuxt_RefreshToken_Handler,
+		},
+		{
+			MethodName: "VerifyToken",
+			Handler:    _GoNuxt_VerifyToken_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

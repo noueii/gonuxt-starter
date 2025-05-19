@@ -68,6 +68,22 @@ export interface paths {
         patch: operations["GoNuxt_UpdateUser"];
         trace?: never;
     };
+    "/v1/verify_token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GoNuxt_VerifyToken"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -112,6 +128,10 @@ export interface components {
             username?: string;
             /** Format: date-time */
             created_at?: string;
+            role?: string;
+        };
+        pbVerifyTokenResponse: {
+            user_id?: string;
             role?: string;
         };
         protobufAny: {
@@ -249,6 +269,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["pbUpdateUserResponse"];
+                };
+            };
+            /** @description An unexpected error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["rpcStatus"];
+                };
+            };
+        };
+    };
+    GoNuxt_VerifyToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A successful response. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["pbVerifyTokenResponse"];
                 };
             };
             /** @description An unexpected error response. */

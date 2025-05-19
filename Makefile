@@ -46,4 +46,16 @@ proto:
 evans: 
 	evans --host localhost --port 7777 -r repl
 
-.PHONY: postgrescreate postgresremove dbcreate dbdrop dbconn dbmigrateup dbmigratedown test server proto
+tools:
+	@echo "Installing tools from $(TOOLS_FILE)..."
+	@grep '_ "' $(TOOLS_FILE) | while read line; do \
+		tool=$$(echo $$line | cut -d'"' -f2); \
+		go install $$tool; \
+	done
+
+godeps:
+	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+
+
+
+.PHONY: postgrescreate postgresremove dbcreate dbdrop dbconn dbmigrateup dbmigratedown test server proto tools

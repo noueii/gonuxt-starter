@@ -13,6 +13,7 @@ type Session = {
 type User = {
   id: string | undefined,
   username: string | undefined,
+  role: string | undefined
 }
 
 
@@ -69,6 +70,7 @@ export const useAuthStore = defineStore('auth', {
       this.user = {
         id: data.user?.id,
         username: data.user?.username,
+        role: data.user?.role
       }
 
       this.session = {
@@ -137,6 +139,24 @@ export const useAuthStore = defineStore('auth', {
           title: "Session refreshed",
           color: 'success',
         })
+      }
+    },
+    async verify(): Promise<void> {
+      const { $apiClient } = useNuxtApp()
+      const { response, data, error } = await $apiClient.GET('/v1/verify_token')
+
+      if (error) {
+        this.session = undefined
+        this.user = undefined
+        return
+      }
+
+      if (response.ok) {
+        if (!this.user) {
+          return
+        }
+        this.user.id = data.user_id
+        this.user.role = data.role
       }
     }
   },

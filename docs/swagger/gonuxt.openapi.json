@@ -159,6 +159,36 @@
                     "GoNuxt"
                 ]
             }
+        },
+        "/v1/verify_token": {
+            "get": {
+                "operationId": "GoNuxt_VerifyToken",
+                "responses": {
+                    "200": {
+                        "description": "A successful response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/pbVerifyTokenResponse"
+                                }
+                            }
+                        }
+                    },
+                    "default": {
+                        "description": "An unexpected error response.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/rpcStatus"
+                                }
+                            }
+                        }
+                    }
+                },
+                "tags": [
+                    "GoNuxt"
+                ]
+            }
         }
     },
     "components": {
@@ -265,6 +295,17 @@
                     "created_at": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "role": {
+                        "type": "string"
+                    }
+                }
+            },
+            "pbVerifyTokenResponse": {
+                "type": "object",
+                "properties": {
+                    "user_id": {
+                        "type": "string"
                     },
                     "role": {
                         "type": "string"
