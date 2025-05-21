@@ -23,11 +23,13 @@ type Session struct {
 }
 
 type User struct {
-	ID             uuid.UUID `json:"id"`
-	Role           string    `json:"role"`
-	CreatedAt      time.Time `json:"created_at"`
-	UpdatedAt      time.Time `json:"updated_at"`
-	Name           string    `json:"name"`
-	HashedPassword string    `json:"hashed_password"`
-	Balance        int32     `json:"balance"`
+	ID             uuid.UUID      `json:"id"`
+	Role           string         `json:"role"`
+	CreatedAt      time.Time      `json:"created_at"`
+	UpdatedAt      time.Time      `json:"updated_at"`
+	Name           string         `json:"name"`
+	Email          string         `json:"email"`
+	EmailVerified  bool           `json:"email_verified"`
+	HashedPassword sql.NullString `json:"hashed_password"`
+	Balance        int32          `json:"balance"`
 }

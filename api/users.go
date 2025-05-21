@@ -11,10 +11,11 @@ import (
 	"github.com/google/uuid"
 	db "github.com/noueii/gonuxt-starter/db/out"
 	"github.com/noueii/gonuxt-starter/util"
+	"github.com/noueii/gonuxt-starter/validator"
 )
 
 type createUserRequest struct {
-	Name     string `json:"name" binding:"required,alphanum,min=6"`
+	Email    string `json:"email" binding:"required,alphanum,min=6"`
 	Password string `json:"password" binding:"required,min=8"`
 }
 
@@ -26,7 +27,12 @@ func (s *Server) createUser(ctx *gin.Context) {
 		return
 	}
 
-	name := req.Name
+	email := req.Email
+	if err := validator.ValidateEmail(email); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
 	password := req.Password
 	hashedPassword, err := util.HashPassword(password)
 
@@ -37,8 +43,11 @@ func (s *Server) createUser(ctx *gin.Context) {
 	}
 
 	user, err := s.db.CreateUser(ctx, db.CreateUserParams{
-		Name:           name,
-		HashedPassword: hashedPassword,
+		Email: email,
+		HashedPassword: sql.NullString{
+			String: hashedPassword,
+			Valid:  true,
+		},
 	})
 	if err != nil {
 		fmt.Println(err.Error())
@@ -96,7 +105,7 @@ func getUserResponseFromUser(user db.User) *userResponse {
 }
 
 type loginUserRequest struct {
-	Username string `json:"username" binding:"required,alphanum,min=6"`
+	Email    string `json:"email" binding:"required,alphanum,min=6"`
 	Password string `json:"password" binding:"required,alphanum,min=8"`
 }
 
@@ -116,7 +125,12 @@ func (server *Server) LoginUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := server.db.GetUserByName(ctx, req.Username)
+	if err := validator.ValidateEmail(req.Email); err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	user, err := server.db.GetUserByEmail(ctx, req.Email)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -127,18 +141,18 @@ func (server *Server) LoginUser(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 	}
 
-	if err = util.CheckPassword(req.Password, user.HashedPassword); err != nil {
+	if err = util.CheckPassword(req.Password, user.HashedPassword.String); err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.Name, user.Role, server.config.TokenAccessDuration)
+	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.ID, user.Email, user.Name, user.Role, server.config.TokenAccessDuration)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(user.Name, user.Role, server.config.TokenRefreshDuration)
+	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(user.ID, user.Email, user.Name, user.Role, server.config.TokenRefreshDuration)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return

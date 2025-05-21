@@ -8,12 +8,13 @@ option go_package = "github.com/noueii/gonuxt-starter/pb";
 
 
 message UpdateUserRequest {
-  string username = 1;
-  optional string password = 2;
-  optional int32  balance = 3;
+  string id = 1;
+  optional string username = 2;
+  optional string password = 3;
+  optional int32  balance = 4;
+  optional string role = 5;
 }
 
 message UpdateUserResponse {
   User user = 1;
-
 }

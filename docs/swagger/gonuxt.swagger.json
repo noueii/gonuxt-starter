@@ -6,6 +6,9 @@
   },
   "tags": [
     {
+      "name": "Auth"
+    },
+    {
       "name": "GoNuxt"
     }
   ],
@@ -16,9 +19,9 @@
     "application/json"
   ],
   "paths": {
-    "/v1/create_user": {
+    "/v1/auth/email/create": {
       "post": {
-        "operationId": "GoNuxt_CreateUser",
+        "operationId": "Auth_CreateUser",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -44,13 +47,13 @@
           }
         ],
         "tags": [
-          "GoNuxt"
+          "Auth"
         ]
       }
     },
-    "/v1/login_user": {
+    "/v1/auth/email/login": {
       "post": {
-        "operationId": "GoNuxt_LoginUser",
+        "operationId": "Auth_LoginUser",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -76,11 +79,113 @@
           }
         ],
         "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/google": {
+      "get": {
+        "operationId": "Auth_GoogleLogin",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGoogleLoginResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/google/callback": {
+      "get": {
+        "operationId": "Auth_GoogleCallback",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbGoogleCallbackResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/token/refresh": {
+      "get": {
+        "operationId": "GoNuxt_RefreshToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbRefreshTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
           "GoNuxt"
         ]
       }
     },
-    "/v1/update_user": {
+    "/v1/token/verify": {
+      "get": {
+        "operationId": "GoNuxt_VerifyToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbVerifyTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "GoNuxt"
+        ]
+      }
+    },
+    "/v1/user": {
       "patch": {
         "operationId": "GoNuxt_UpdateUser",
         "responses": {
@@ -117,7 +222,7 @@
     "pbCreateUserRequest": {
       "type": "object",
       "properties": {
-        "username": {
+        "email": {
           "type": "string"
         },
         "password": {
@@ -133,10 +238,26 @@
         }
       }
     },
+    "pbGoogleCallbackResponse": {
+      "type": "object",
+      "properties": {
+        "jwt_token": {
+          "type": "string"
+        }
+      }
+    },
+    "pbGoogleLoginResponse": {
+      "type": "object",
+      "properties": {
+        "redirect_url": {
+          "type": "string"
+        }
+      }
+    },
     "pbLoginUserRequest": {
       "type": "object",
       "properties": {
-        "username": {
+        "email": {
           "type": "string"
         },
         "password": {
@@ -150,20 +271,50 @@
         "user": {
           "$ref": "#/definitions/pbUser"
         },
-        "sessionId": {
+        "session_id": {
           "type": "string"
         },
-        "accessToken": {
+        "access_token": {
           "type": "string"
         },
-        "accessTokenExpiresAt": {
+        "access_token_expires_at": {
           "type": "string",
           "format": "date-time"
         },
-        "refreshToken": {
+        "refresh_token": {
           "type": "string"
         },
-        "refreshTokenExpiresAt": {
+        "refresh_token_expires_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pbRefreshTokenResponse": {
+      "type": "object",
+      "properties": {
+        "access_token": {
+          "type": "string"
+        },
+        "access_token_expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "user": {
+          "$ref": "#/definitions/pbUser"
+        },
+        "session": {
+          "$ref": "#/definitions/pbSession"
+        }
+      }
+    },
+    "pbSession": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "expires_at": {
           "type": "string",
           "format": "date-time"
         }
@@ -172,6 +323,9 @@
     "pbUpdateUserRequest": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string"
+        },
         "username": {
           "type": "string"
         },
@@ -181,6 +335,9 @@
         "balance": {
           "type": "integer",
           "format": "int32"
+        },
+        "role": {
+          "type": "string"
         }
       }
     },
@@ -198,12 +355,29 @@
         "id": {
           "type": "string"
         },
+        "email": {
+          "type": "string"
+        },
         "username": {
           "type": "string"
         },
-        "createdAt": {
+        "created_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    },
+    "pbVerifyTokenResponse": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
         }
       }
     },

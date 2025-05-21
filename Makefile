@@ -39,10 +39,24 @@ proto:
 	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
 	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
 	--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
-	--openapiv2_out=docs/swagger --openapiv2_opt=allow_merge=true,merge_file_name=gonuxt \
+	--openapiv2_out=docs/swagger --openapiv2_opt=allow_merge=true,merge_file_name=gonuxt,json_names_for_fields=false \
+	--experimental_allow_proto3_optional \
 	proto/*.proto
+	(cd web && npm run api:generate)
 
 evans: 
 	evans --host localhost --port 7777 -r repl
 
-.PHONY: postgrescreate postgresremove dbcreate dbdrop dbconn dbmigrateup dbmigratedown test server proto
+tools:
+	@echo "Installing tools from $(TOOLS_FILE)..."
+	@grep '_ "' $(TOOLS_FILE) | while read line; do \
+		tool=$$(echo $$line | cut -d'"' -f2); \
+		go install $$tool; \
+	done
+
+godeps:
+	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+
+
+
+.PHONY: postgrescreate postgresremove dbcreate dbdrop dbconn dbmigrateup dbmigratedown test server proto tools

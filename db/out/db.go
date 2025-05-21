@@ -36,17 +36,17 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getSessionByIdStmt, err = db.PrepareContext(ctx, getSessionById); err != nil {
 		return nil, fmt.Errorf("error preparing query GetSessionById: %w", err)
 	}
+	if q.getUserByEmailStmt, err = db.PrepareContext(ctx, getUserByEmail); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUserByEmail: %w", err)
+	}
 	if q.getUserByIdStmt, err = db.PrepareContext(ctx, getUserById); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserById: %w", err)
-	}
-	if q.getUserByNameStmt, err = db.PrepareContext(ctx, getUserByName); err != nil {
-		return nil, fmt.Errorf("error preparing query GetUserByName: %w", err)
 	}
 	if q.updateUserBalanceStmt, err = db.PrepareContext(ctx, updateUserBalance); err != nil {
 		return nil, fmt.Errorf("error preparing query UpdateUserBalance: %w", err)
 	}
-	if q.updateUserByNameStmt, err = db.PrepareContext(ctx, updateUserByName); err != nil {
-		return nil, fmt.Errorf("error preparing query UpdateUserByName: %w", err)
+	if q.updateUserByIdStmt, err = db.PrepareContext(ctx, updateUserById); err != nil {
+		return nil, fmt.Errorf("error preparing query UpdateUserById: %w", err)
 	}
 	return &q, nil
 }
@@ -73,14 +73,14 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing getSessionByIdStmt: %w", cerr)
 		}
 	}
+	if q.getUserByEmailStmt != nil {
+		if cerr := q.getUserByEmailStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUserByEmailStmt: %w", cerr)
+		}
+	}
 	if q.getUserByIdStmt != nil {
 		if cerr := q.getUserByIdStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getUserByIdStmt: %w", cerr)
-		}
-	}
-	if q.getUserByNameStmt != nil {
-		if cerr := q.getUserByNameStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getUserByNameStmt: %w", cerr)
 		}
 	}
 	if q.updateUserBalanceStmt != nil {
@@ -88,9 +88,9 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing updateUserBalanceStmt: %w", cerr)
 		}
 	}
-	if q.updateUserByNameStmt != nil {
-		if cerr := q.updateUserByNameStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing updateUserByNameStmt: %w", cerr)
+	if q.updateUserByIdStmt != nil {
+		if cerr := q.updateUserByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing updateUserByIdStmt: %w", cerr)
 		}
 	}
 	return err
@@ -136,10 +136,10 @@ type Queries struct {
 	createUserStmt        *sql.Stmt
 	deleteUserStmt        *sql.Stmt
 	getSessionByIdStmt    *sql.Stmt
+	getUserByEmailStmt    *sql.Stmt
 	getUserByIdStmt       *sql.Stmt
-	getUserByNameStmt     *sql.Stmt
 	updateUserBalanceStmt *sql.Stmt
-	updateUserByNameStmt  *sql.Stmt
+	updateUserByIdStmt    *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
@@ -150,9 +150,9 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		createUserStmt:        q.createUserStmt,
 		deleteUserStmt:        q.deleteUserStmt,
 		getSessionByIdStmt:    q.getSessionByIdStmt,
+		getUserByEmailStmt:    q.getUserByEmailStmt,
 		getUserByIdStmt:       q.getUserByIdStmt,
-		getUserByNameStmt:     q.getUserByNameStmt,
 		updateUserBalanceStmt: q.updateUserBalanceStmt,
-		updateUserByNameStmt:  q.updateUserByNameStmt,
+		updateUserByIdStmt:    q.updateUserByIdStmt,
 	}
 }

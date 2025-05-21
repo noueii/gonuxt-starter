@@ -53,7 +53,7 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 }
 
 const getSessionById = `-- name: GetSessionById :one
-SELECT sessions.id, sessions.user_id, sessions.refresh_token, sessions.created_at, sessions.expires_at, sessions.user_agent, sessions.client_ip, sessions.is_revoked, users.name AS username
+SELECT sessions.id, sessions.user_id, sessions.refresh_token, sessions.created_at, sessions.expires_at, sessions.user_agent, sessions.client_ip, sessions.is_revoked, users.email AS email, users.name AS username, users.role as role
 FROM sessions
 INNER JOIN users ON users.id = sessions.user_id
 WHERE sessions.id = $1 
@@ -69,7 +69,9 @@ type GetSessionByIdRow struct {
 	UserAgent    string       `json:"user_agent"`
 	ClientIp     string       `json:"client_ip"`
 	IsRevoked    sql.NullBool `json:"is_revoked"`
+	Email        string       `json:"email"`
 	Username     string       `json:"username"`
+	Role         string       `json:"role"`
 }
 
 func (q *Queries) GetSessionById(ctx context.Context, id uuid.UUID) (GetSessionByIdRow, error) {
@@ -84,7 +86,9 @@ func (q *Queries) GetSessionById(ctx context.Context, id uuid.UUID) (GetSessionB
 		&i.UserAgent,
 		&i.ClientIp,
 		&i.IsRevoked,
+		&i.Email,
 		&i.Username,
+		&i.Role,
 	)
 	return i, err
 }

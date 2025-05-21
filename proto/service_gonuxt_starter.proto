@@ -2,32 +2,38 @@ syntax = "proto3";
 
 package pb;
 
-import "rpc_create_user.proto";
-import "rpc_login_user.proto";
+
 import "rpc_update_user.proto";
+import "rpc_refresh_token.proto";
+import "rpc_verify_token.proto";
 import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "github.com/noueii/gonuxt-starter/pb";
 
+
+
 service GoNuxt {
-  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
-    option (google.api.http) = {
-      post: "/v1/create_user"
-      body: "*"
-    };
-  }
-  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse) {
-    option (google.api.http) = {
-      post: "/v1/login_user"
-      body: "*"
-    };
-  }
   
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse){
     option (google.api.http) = {
-      patch: "/v1/update_user"
+      patch: "/v1/user"
       body: "*"
     };
   }
 
+  rpc RefreshToken(google.protobuf.Empty) returns (RefreshTokenResponse){
+    option (google.api.http) = {
+      get: "/v1/token/refresh"
+    };
+  }
+
+  rpc VerifyToken(google.protobuf.Empty) returns (VerifyTokenResponse){
+    option (google.api.http) = {
+      get: "/v1/token/verify"
+    };
+  }
+
+
 }
+

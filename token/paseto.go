@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/aead/chacha20poly1305"
+	"github.com/google/uuid"
 	"github.com/o1egl/paseto"
 )
 
@@ -26,8 +27,8 @@ func NewPasetoMaker(symmetricKey string) (Maker, error) {
 	return maker, nil
 }
 
-func (m *PasetoMaker) CreateToken(username string, role string, duration time.Duration) (string, *Payload, error) {
-	payload, err := NewPayload(username, role, duration)
+func (m *PasetoMaker) CreateToken(userID uuid.UUID, email string, username string, role string, duration time.Duration) (string, *Payload, error) {
+	payload, err := NewPayload(userID, email, username, role, duration)
 	if err != nil {
 		return "", nil, err
 	}

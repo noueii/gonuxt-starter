@@ -1,8 +1,8 @@
 -- name: CreateUser :one
 INSERT INTO users(
-	name, hashed_password
+	email, email_verified, name, hashed_password
 ) VALUES (
-	$1, $2
+	$1, $2, $3, $4
 ) RETURNING *;
 
 -- name: GetUserById :one
@@ -17,15 +17,17 @@ SET balance = $2
 WHERE id = $1
 RETURNING *;
 
--- name: GetUserByName :one
-SELECT * FROM users WHERE name = $1 LIMIT 1;
+-- name: GetUserByEmail :one
+SELECT * FROM users WHERE email = $1 LIMIT 1;
 
--- name: UpdateUserByName :one
+-- name: UpdateUserById :one
 UPDATE users
 SET 
+	name = COALESCE(sqlc.narg(name), name),
 	hashed_password = COALESCE(sqlc.narg(hashed_password), hashed_password),
 	balance = COALESCE(sqlc.narg(balance), balance),
+	role = COALESCE(sqlc.narg(role), role),
 	updated_at = NOW()
 WHERE 
-	name = sqlc.arg(name)
+	id = sqlc.arg(id)
 RETURNING *;
