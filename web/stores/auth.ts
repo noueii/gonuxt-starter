@@ -84,12 +84,16 @@ export const useAuthStore = defineStore('auth', {
 
     },
     async logout(): Promise<void> {
-      const refreshToken = useCookie('refresh_token')
-      const accessToken = useCookie('access_token')
-      refreshToken.value = undefined
-      accessToken.value = undefined
-      this.session = undefined
-      this.user = undefined
+      const { $apiClient } = useNuxtApp()
+      const { response, error } = await $apiClient.GET('/v1/auth/logout')
+      if (error) {
+        console.log(error.message)
+        return
+      }
+      if (response.ok) {
+        this.session = undefined
+        this.user = undefined
+      }
 
     },
     async register(input: { email: string, password: string, confirmPassword: string }): Promise<void> {

@@ -1,0 +1,64 @@
+
+syntax = "proto3";
+
+package pb;
+
+import "rpc_create_user.proto";
+import "rpc_login_user.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/noueii/gonuxt-starter/internal/pb";
+
+
+
+service Auth {
+  rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/email/create"
+      body: "*"
+    };
+  }
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse) {
+    option (google.api.http) = {
+      post: "/v1/auth/email/login"
+      body: "*"
+    };
+  }
+  
+  rpc GoogleLogin(GoogleLoginRequest) returns (GoogleLoginResponse) {
+    option (google.api.http) = {
+      get: "/v1/auth/google"
+    };
+  }
+
+  rpc GoogleCallback(GoogleCallbackRequest) returns (GoogleCallbackResponse) {
+    option (google.api.http) = {
+      get: "/v1/auth/google/callback"
+    };
+  }
+
+  rpc Logout(LogoutRequest) returns (LogoutResponse) {
+    option (google.api.http) = {
+      get: "/v1/auth/logout"
+    };
+  }
+
+}
+
+message LogoutRequest {}
+message LogoutResponse{}
+
+message GoogleLoginRequest {}
+message GoogleLoginResponse{
+  string redirect_url = 1;
+}
+
+message GoogleCallbackRequest {
+  string code = 1;
+  string state = 2;
+}
+
+message GoogleCallbackResponse {
+  string jwt_token = 1;
+}
+

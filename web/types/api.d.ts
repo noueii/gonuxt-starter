@@ -68,6 +68,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["Auth_Logout"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/token/refresh": {
         parameters: {
             query?: never;
@@ -147,6 +163,7 @@ export interface components {
             /** Format: date-time */
             refresh_token_expires_at?: string;
         };
+        pbLogoutResponse: Record<string, never>;
         pbRefreshTokenResponse: {
             access_token?: string;
             /** Format: date-time */
@@ -316,6 +333,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["pbGoogleCallbackResponse"];
+                };
+            };
+            /** @description An unexpected error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["rpcStatus"];
+                };
+            };
+        };
+    };
+    Auth_Logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A successful response. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["pbLogoutResponse"];
                 };
             };
             /** @description An unexpected error response. */

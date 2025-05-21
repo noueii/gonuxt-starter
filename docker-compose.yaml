@@ -1,19 +1,34 @@
 name: gonuxt-starter
 
 services:
+  web:
+    build:
+      context: web/
+      dockerfile: Dockerfile
+    depends_on:
+      - api
+    ports:
+        - "3000:3000"
+    networks:
+      - gonuxt-net
+    environment:
+      - API_BASE_URL=http://api:8080
+
   api:
-    
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: build/Dockerfile
     depends_on:
       postgres:
         condition: service_healthy
     ports:
       - "8080:8080"
+      - "7777:7777"
     environment:
       - GOOSE_DRIVER=postgres
       - GOOSE_DBSTRING=postgres://root:gonuxtsecret@postgres:5432/gonuxt
+    networks:
+      - gonuxt-net
 
   postgres:
     image: postgres:latest
@@ -26,4 +41,11 @@ services:
       interval: 5s
       retries: 5
       timeout: 3s
-  
+    ports:
+      - "5432:5432"
+    networks:
+      - gonuxt-net
+
+networks:
+  gonuxt-net:
+    driver: bridge
