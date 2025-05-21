@@ -20,11 +20,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	GoNuxt_CreateUser_FullMethodName   = "/pb.GoNuxt/CreateUser"
-	GoNuxt_LoginUser_FullMethodName    = "/pb.GoNuxt/LoginUser"
-	GoNuxt_UpdateUser_FullMethodName   = "/pb.GoNuxt/UpdateUser"
-	GoNuxt_RefreshToken_FullMethodName = "/pb.GoNuxt/RefreshToken"
-	GoNuxt_VerifyToken_FullMethodName  = "/pb.GoNuxt/VerifyToken"
+	GoNuxt_CreateUser_FullMethodName     = "/pb.GoNuxt/CreateUser"
+	GoNuxt_LoginUser_FullMethodName      = "/pb.GoNuxt/LoginUser"
+	GoNuxt_UpdateUser_FullMethodName     = "/pb.GoNuxt/UpdateUser"
+	GoNuxt_RefreshToken_FullMethodName   = "/pb.GoNuxt/RefreshToken"
+	GoNuxt_VerifyToken_FullMethodName    = "/pb.GoNuxt/VerifyToken"
+	GoNuxt_GoogleLogin_FullMethodName    = "/pb.GoNuxt/GoogleLogin"
+	GoNuxt_GoogleCallback_FullMethodName = "/pb.GoNuxt/GoogleCallback"
 )
 
 // GoNuxtClient is the client API for GoNuxt service.
@@ -36,6 +38,8 @@ type GoNuxtClient interface {
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	RefreshToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 	VerifyToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*VerifyTokenResponse, error)
+	GoogleLogin(ctx context.Context, in *GoogleLoginRequest, opts ...grpc.CallOption) (*GoogleLoginResponse, error)
+	GoogleCallback(ctx context.Context, in *GoogleCallbackRequest, opts ...grpc.CallOption) (*GoogleCallbackResponse, error)
 }
 
 type goNuxtClient struct {
@@ -96,6 +100,26 @@ func (c *goNuxtClient) VerifyToken(ctx context.Context, in *emptypb.Empty, opts 
 	return out, nil
 }
 
+func (c *goNuxtClient) GoogleLogin(ctx context.Context, in *GoogleLoginRequest, opts ...grpc.CallOption) (*GoogleLoginResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GoogleLoginResponse)
+	err := c.cc.Invoke(ctx, GoNuxt_GoogleLogin_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *goNuxtClient) GoogleCallback(ctx context.Context, in *GoogleCallbackRequest, opts ...grpc.CallOption) (*GoogleCallbackResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GoogleCallbackResponse)
+	err := c.cc.Invoke(ctx, GoNuxt_GoogleCallback_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GoNuxtServer is the server API for GoNuxt service.
 // All implementations must embed UnimplementedGoNuxtServer
 // for forward compatibility.
@@ -105,6 +129,8 @@ type GoNuxtServer interface {
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	RefreshToken(context.Context, *emptypb.Empty) (*RefreshTokenResponse, error)
 	VerifyToken(context.Context, *emptypb.Empty) (*VerifyTokenResponse, error)
+	GoogleLogin(context.Context, *GoogleLoginRequest) (*GoogleLoginResponse, error)
+	GoogleCallback(context.Context, *GoogleCallbackRequest) (*GoogleCallbackResponse, error)
 	mustEmbedUnimplementedGoNuxtServer()
 }
 
@@ -129,6 +155,12 @@ func (UnimplementedGoNuxtServer) RefreshToken(context.Context, *emptypb.Empty) (
 }
 func (UnimplementedGoNuxtServer) VerifyToken(context.Context, *emptypb.Empty) (*VerifyTokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method VerifyToken not implemented")
+}
+func (UnimplementedGoNuxtServer) GoogleLogin(context.Context, *GoogleLoginRequest) (*GoogleLoginResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GoogleLogin not implemented")
+}
+func (UnimplementedGoNuxtServer) GoogleCallback(context.Context, *GoogleCallbackRequest) (*GoogleCallbackResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GoogleCallback not implemented")
 }
 func (UnimplementedGoNuxtServer) mustEmbedUnimplementedGoNuxtServer() {}
 func (UnimplementedGoNuxtServer) testEmbeddedByValue()                {}
@@ -241,6 +273,42 @@ func _GoNuxt_VerifyToken_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _GoNuxt_GoogleLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GoogleLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoNuxtServer).GoogleLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoNuxt_GoogleLogin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoNuxtServer).GoogleLogin(ctx, req.(*GoogleLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _GoNuxt_GoogleCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GoogleCallbackRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoNuxtServer).GoogleCallback(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoNuxt_GoogleCallback_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoNuxtServer).GoogleCallback(ctx, req.(*GoogleCallbackRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // GoNuxt_ServiceDesc is the grpc.ServiceDesc for GoNuxt service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -267,6 +335,14 @@ var GoNuxt_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "VerifyToken",
 			Handler:    _GoNuxt_VerifyToken_Handler,
+		},
+		{
+			MethodName: "GoogleLogin",
+			Handler:    _GoNuxt_GoogleLogin_Handler,
+		},
+		{
+			MethodName: "GoogleCallback",
+			Handler:    _GoNuxt_GoogleCallback_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

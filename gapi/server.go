@@ -9,6 +9,7 @@ import (
 
 type Server struct {
 	pb.UnimplementedGoNuxtServer
+	//pb.UnimplementedAuthServiceServer
 	config     *util.Config
 	db         *db.Queries
 	tokenMaker token.Maker

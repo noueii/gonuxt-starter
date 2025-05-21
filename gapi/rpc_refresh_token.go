@@ -30,17 +30,23 @@ func (server *Server) RefreshToken(ctx context.Context, _ *emptypb.Empty) (*pb.R
 		token := grpcMeta.RefreshToken
 
 		values = []string{token}
+
 		if len(values) == 0 {
 			return nil, fmt.Errorf("missing authorization header")
 		}
 	}
 
 	authHeader := values[0]
+	fmt.Println(authHeader)
+	fields := strings.Split(authHeader, " ")
+	fmt.Println(fields)
+	fmt.Println(len(fields))
 
-	fields := strings.Fields(authHeader)
 	if len(fields) < 2 {
 		return nil, fmt.Errorf("invalid authorization header format")
 	}
+
+	fmt.Println("Passed verification")
 
 	authType := strings.ToLower(fields[0])
 	if authType != authorizationBearer {
@@ -68,7 +74,7 @@ func (server *Server) RefreshToken(ctx context.Context, _ *emptypb.Empty) (*pb.R
 		return nil, status.Error(codes.Unauthenticated, "Blocked session")
 	}
 
-	if session.Username != payload.Username {
+	if session.Email != payload.Email {
 		return nil, status.Error(codes.Unauthenticated, "incorrect session user")
 	}
 
@@ -80,7 +86,7 @@ func (server *Server) RefreshToken(ctx context.Context, _ *emptypb.Empty) (*pb.R
 		return nil, status.Error(codes.Unauthenticated, "session expired")
 	}
 
-	newToken, payload, err := server.tokenMaker.CreateToken(payload.Username, payload.Role, server.config.TokenAccessDuration)
+	newToken, payload, err := server.tokenMaker.CreateToken(payload.UserID, payload.Email, session.Username, session.Role, server.config.TokenAccessDuration)
 
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "Error refreshing token: %s", err)
@@ -113,6 +119,16 @@ func (server *Server) RefreshToken(ctx context.Context, _ *emptypb.Empty) (*pb.R
 	resp := &pb.RefreshTokenResponse{
 		AccessToken:          newToken,
 		AccessTokenExpiresAt: timestamppb.New(payload.ExpiresAt),
+		Session: &pb.Session{
+			Id:        session.ID.String(),
+			ExpiresAt: timestamppb.New(session.ExpiresAt),
+		},
+		User: &pb.User{
+			Id:       session.UserID.String(),
+			Email:    session.Email,
+			Username: session.Username,
+			Role:     session.Role,
+		},
 	}
 	return resp, nil
 }

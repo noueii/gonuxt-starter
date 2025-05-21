@@ -3,7 +3,7 @@ import type { paths } from "~/types/api";
 
 
 export default defineNuxtPlugin(() => {
-  const apiClient = createClient<paths>({ baseUrl: "http://192.168.73.75:8080", credentials: 'include' })
+  const apiClient = createClient<paths>({ baseUrl: "http://localhost:8080", credentials: 'include' })
   return {
     provide: {
       apiClient: apiClient

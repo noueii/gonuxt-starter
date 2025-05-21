@@ -4,8 +4,10 @@ CREATE TABLE users(
 	role TEXT NOT NULL DEFAULT 'user',
 	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-	name TEXT UNIQUE NOT NULL,
-	hashed_password TEXT NOT NULL
+	name TEXT NOT NULL,
+	email TEXT UNIQUE NOT NULL,
+	email_verified BOOL DEFAULT FALSE,
+	hashed_password TEXT
 );
 
 -- +goose Down

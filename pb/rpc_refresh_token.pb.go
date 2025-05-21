@@ -70,6 +70,8 @@ type RefreshTokenResponse struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
 	AccessToken          string                 `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" json:"access_token,omitempty"`
 	AccessTokenExpiresAt *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=access_token_expires_at,json=accessTokenExpiresAt,proto3" json:"access_token_expires_at,omitempty"`
+	User                 *User                  `protobuf:"bytes,3,opt,name=user,proto3" json:"user,omitempty"`
+	Session              *Session               `protobuf:"bytes,4,opt,name=session,proto3" json:"session,omitempty"`
 	unknownFields        protoimpl.UnknownFields
 	sizeCache            protoimpl.SizeCache
 }
@@ -118,17 +120,33 @@ func (x *RefreshTokenResponse) GetAccessTokenExpiresAt() *timestamppb.Timestamp 
 	return nil
 }
 
+func (x *RefreshTokenResponse) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *RefreshTokenResponse) GetSession() *Session {
+	if x != nil {
+		return x.Session
+	}
+	return nil
+}
+
 var File_rpc_refresh_token_proto protoreflect.FileDescriptor
 
 const file_rpc_refresh_token_proto_rawDesc = "" +
 	"\n" +
 	"\x17rpc_refresh_token.proto\x12\x02pb\x1a\n" +
-	"user.proto\x1a\x1fgoogle/protobuf/timestamp.proto\":\n" +
+	"user.proto\x1a\rsession.proto\x1a\x1fgoogle/protobuf/timestamp.proto\":\n" +
 	"\x13RefreshTokenRequest\x12#\n" +
-	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"\x8c\x01\n" +
+	"\rrefresh_token\x18\x01 \x01(\tR\frefreshToken\"\xd1\x01\n" +
 	"\x14RefreshTokenResponse\x12!\n" +
 	"\faccess_token\x18\x01 \x01(\tR\vaccessToken\x12Q\n" +
-	"\x17access_token_expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x14accessTokenExpiresAtB%Z#github.com/noueii/gonuxt-starter/pbb\x06proto3"
+	"\x17access_token_expires_at\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x14accessTokenExpiresAt\x12\x1c\n" +
+	"\x04user\x18\x03 \x01(\v2\b.pb.UserR\x04user\x12%\n" +
+	"\asession\x18\x04 \x01(\v2\v.pb.SessionR\asessionB%Z#github.com/noueii/gonuxt-starter/pbb\x06proto3"
 
 var (
 	file_rpc_refresh_token_proto_rawDescOnce sync.Once
@@ -147,14 +165,18 @@ var file_rpc_refresh_token_proto_goTypes = []any{
 	(*RefreshTokenRequest)(nil),   // 0: pb.RefreshTokenRequest
 	(*RefreshTokenResponse)(nil),  // 1: pb.RefreshTokenResponse
 	(*timestamppb.Timestamp)(nil), // 2: google.protobuf.Timestamp
+	(*User)(nil),                  // 3: pb.User
+	(*Session)(nil),               // 4: pb.Session
 }
 var file_rpc_refresh_token_proto_depIdxs = []int32{
 	2, // 0: pb.RefreshTokenResponse.access_token_expires_at:type_name -> google.protobuf.Timestamp
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	3, // 1: pb.RefreshTokenResponse.user:type_name -> pb.User
+	4, // 2: pb.RefreshTokenResponse.session:type_name -> pb.Session
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_rpc_refresh_token_proto_init() }
@@ -163,6 +185,7 @@ func file_rpc_refresh_token_proto_init() {
 		return
 	}
 	file_user_proto_init()
+	file_session_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

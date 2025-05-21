@@ -40,6 +40,7 @@ proto:
 	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
 	--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
 	--openapiv2_out=docs/swagger --openapiv2_opt=allow_merge=true,merge_file_name=gonuxt,json_names_for_fields=false \
+	--experimental_allow_proto3_optional \
 	proto/*.proto
 	(cd web && npm run api:generate)
 

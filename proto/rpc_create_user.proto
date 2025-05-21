@@ -8,8 +8,8 @@ option go_package = "github.com/noueii/gonuxt-starter/pb";
 
 
 message CreateUserRequest {
-  string username = 1;
-  string password = 2;
+  string email = 1;
+  optional string password = 2;
 }
 
 message CreateUserResponse {

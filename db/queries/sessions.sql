@@ -5,7 +5,7 @@ INSERT INTO sessions(
 RETURNING *;
 	
 -- name: GetSessionById :one
-SELECT sessions.*, users.name AS username, users.role as role
+SELECT sessions.*, users.email AS email, users.name AS username, users.role as role
 FROM sessions
 INNER JOIN users ON users.id = sessions.user_id
 WHERE sessions.id = $1 

@@ -23,9 +23,11 @@ const (
 
 type UpdateUserRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Password      *string                `protobuf:"bytes,2,opt,name=password,proto3,oneof" json:"password,omitempty"`
-	Balance       *int32                 `protobuf:"varint,3,opt,name=balance,proto3,oneof" json:"balance,omitempty"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username      *string                `protobuf:"bytes,2,opt,name=username,proto3,oneof" json:"username,omitempty"`
+	Password      *string                `protobuf:"bytes,3,opt,name=password,proto3,oneof" json:"password,omitempty"`
+	Balance       *int32                 `protobuf:"varint,4,opt,name=balance,proto3,oneof" json:"balance,omitempty"`
+	Role          *string                `protobuf:"bytes,5,opt,name=role,proto3,oneof" json:"role,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -60,9 +62,16 @@ func (*UpdateUserRequest) Descriptor() ([]byte, []int) {
 	return file_rpc_update_user_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *UpdateUserRequest) GetUsername() string {
+func (x *UpdateUserRequest) GetId() string {
 	if x != nil {
-		return x.Username
+		return x.Id
+	}
+	return ""
+}
+
+func (x *UpdateUserRequest) GetUsername() string {
+	if x != nil && x.Username != nil {
+		return *x.Username
 	}
 	return ""
 }
@@ -79,6 +88,13 @@ func (x *UpdateUserRequest) GetBalance() int32 {
 		return *x.Balance
 	}
 	return 0
+}
+
+func (x *UpdateUserRequest) GetRole() string {
+	if x != nil && x.Role != nil {
+		return *x.Role
+	}
+	return ""
 }
 
 type UpdateUserResponse struct {
@@ -130,14 +146,18 @@ var File_rpc_update_user_proto protoreflect.FileDescriptor
 const file_rpc_update_user_proto_rawDesc = "" +
 	"\n" +
 	"\x15rpc_update_user.proto\x12\x02pb\x1a\n" +
-	"user.proto\"\x88\x01\n" +
-	"\x11UpdateUserRequest\x12\x1a\n" +
-	"\busername\x18\x01 \x01(\tR\busername\x12\x1f\n" +
-	"\bpassword\x18\x02 \x01(\tH\x00R\bpassword\x88\x01\x01\x12\x1d\n" +
-	"\abalance\x18\x03 \x01(\x05H\x01R\abalance\x88\x01\x01B\v\n" +
+	"user.proto\"\xcc\x01\n" +
+	"\x11UpdateUserRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\busername\x18\x02 \x01(\tH\x00R\busername\x88\x01\x01\x12\x1f\n" +
+	"\bpassword\x18\x03 \x01(\tH\x01R\bpassword\x88\x01\x01\x12\x1d\n" +
+	"\abalance\x18\x04 \x01(\x05H\x02R\abalance\x88\x01\x01\x12\x17\n" +
+	"\x04role\x18\x05 \x01(\tH\x03R\x04role\x88\x01\x01B\v\n" +
+	"\t_usernameB\v\n" +
 	"\t_passwordB\n" +
 	"\n" +
-	"\b_balance\"2\n" +
+	"\b_balanceB\a\n" +
+	"\x05_role\"2\n" +
 	"\x12UpdateUserResponse\x12\x1c\n" +
 	"\x04user\x18\x01 \x01(\v2\b.pb.UserR\x04userB%Z#github.com/noueii/gonuxt-starter/pbb\x06proto3"
 

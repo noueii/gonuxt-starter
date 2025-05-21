@@ -1,7 +1,5 @@
 <script setup lang="ts">
-const auth = useCookie('auth')
 
-console.log(auth.value)
 
 
 </script>

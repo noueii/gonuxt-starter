@@ -9,11 +9,22 @@ const { refresh, loggedIn, user, login, register } = useAuthStore()
 
 const variant = ref("signin")
 
+async function handleGoogle() {
+  const { data, error } = await $apiClient.GET('/auth/google')
+  if (error) {
+    return
+  }
 
+  if (data.redirect_url) {
+    navigateTo(data.redirect_url, { external: true })
+  }
+
+
+}
 
 
 const authData = reactive({
-  username: '',
+  email: '',
   password: '',
   confirmPassword: ''
 })
@@ -27,22 +38,22 @@ function handleVariantChange() {
 }
 
 async function handleSubmit() {
-  const { username, password, confirmPassword } = authData
+  const { email, password, confirmPassword } = authData
 
-  if (!username || !password || (variant.value === "register" && !confirmPassword)) {
+  if (!email || email.length == 0 || !password || password.length == 0 || (variant.value === "register" && !confirmPassword)) {
     return
   }
 
   if (variant.value === "signin") {
     await login({
-      username, password
+      email, password
     })
 
     console.log('login done')
   }
 
   if (variant.value === "register") {
-    register({ username, password, confirmPassword })
+    register({ email, password, confirmPassword })
   }
 }
 
@@ -79,12 +90,8 @@ async function handleUpdate() {
       color: 'success'
     })
   }
-
-
-
-
-
 }
+
 </script>
 
 <template>
@@ -94,8 +101,8 @@ async function handleUpdate() {
     <h2 v-if='variant === "register"'> Register</h2>
     <div class='flex flex-col gap-4'>
       <div class='flex flex-col'>
-        <label>Username </label>
-        <input v-model="authData.username" class='border-2 border-accent rounded w-full p-1' name="username">
+        <label>Email </label>
+        <input v-model="authData.email" class='border-2 border-accent rounded w-full p-1' name="username">
       </div>
       <div class='flex flex-col'>
         <label class> Password </label>
@@ -117,5 +124,6 @@ async function handleUpdate() {
     <Button type="submit"> Sign in </Button>
     <Button @click="handleUpdate"> Update </Button>
     <Button @click="refresh"> Refresh </Button>
+    <Button @click="handleGoogle">Google</Button>
   </form>
 </template>

@@ -12,6 +12,7 @@ type Session = {
 
 type User = {
   id: string | undefined,
+  email: string | undefined,
   username: string | undefined,
   role: string | undefined
 }
@@ -33,24 +34,22 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    async login(input: { username: string, password: string }): Promise<void> {
-      const { username, password } = input
+    async login(input: { email: string, password: string }): Promise<void> {
+      const { email, password } = input
       const { $apiClient } = useNuxtApp()
       const toast = useToast()
 
-      console.log(username, password)
-      if (!username || !password || username.length === 0 || password.length === 0) return
+      if (!email || !password || email.length === 0 || password.length === 0) return
 
       const { response, error, data } = await $apiClient.POST('/v1/login_user', {
         body: {
-          username, password
+          email, password
         }
       })
 
 
 
       if (error) {
-        console.log(error)
         toast.add({
           title: "Login error",
           description: error.message,
@@ -60,7 +59,6 @@ export const useAuthStore = defineStore('auth', {
       }
 
       if (response.ok) {
-        console.log(response)
         toast.add({
           title: "Logged in",
           color: "success"
@@ -70,13 +68,15 @@ export const useAuthStore = defineStore('auth', {
       this.user = {
         id: data.user?.id,
         username: data.user?.username,
-        role: data.user?.role
+        role: data.user?.role,
+        email: data.user?.email
       }
 
       this.session = {
         id: data?.session_id,
         expiresAt: new Date()
       }
+
 
       reloadNuxtApp({
         path: '/'
@@ -92,15 +92,15 @@ export const useAuthStore = defineStore('auth', {
       this.user = undefined
 
     },
-    async register(input: { username: string, password: string, confirmPassword: string }): Promise<void> {
-      const { username, password, confirmPassword } = input
+    async register(input: { email: string, password: string, confirmPassword: string }): Promise<void> {
+      const { email, password, confirmPassword } = input
       const { $apiClient } = useNuxtApp()
       const toast = useToast()
-      if (!username || !password || username.length === 0 || password.length === 0 || password !== confirmPassword) return
+      if (!email || !password || email.length === 0 || password.length === 0 || password !== confirmPassword) return
 
       const { response, error } = await $apiClient.POST('/v1/create_user', {
         body: {
-          username, password
+          email, password
         }
       })
 
@@ -124,21 +124,28 @@ export const useAuthStore = defineStore('auth', {
 
     async refresh(): Promise<void> {
       const { $apiClient } = useNuxtApp()
-      const response = await $apiClient.GET("/v1/refresh_token")
-      const toast = useToast()
-      if (response.error) {
-        toast.add({
-          title: "Error refreshing session",
-          description: response.error.message,
-          color: 'error'
-        })
+      const { response, error, data } = await $apiClient.GET("/v1/refresh_token")
+      //const toast = useToast()
+      if (error) {
+        return
       }
 
-      if (response.response.ok) {
-        toast.add({
-          title: "Session refreshed",
-          color: 'success',
-        })
+      if (response.ok) {
+
+        if (!data || !data.user || !data.session) return
+
+        this.user = {
+          id: data.user.id,
+          email: data.user.email,
+          role: data.user.role,
+          username: data.user.username
+        }
+
+        this.session = {
+          id: data.session.id,
+          expiresAt: new Date(data.session.expires_at ?? 0)
+        }
+
       }
     },
     async verify(): Promise<void> {

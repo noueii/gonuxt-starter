@@ -2,6 +2,8 @@ package gapi
 
 import (
 	"context"
+	"database/sql"
+	"strings"
 
 	"github.com/lib/pq"
 	db "github.com/noueii/gonuxt-starter/db/out"
@@ -22,12 +24,23 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 
 	hashedPassword, err := util.HashPassword(req.GetPassword())
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to has password: %s", err)
+		return nil, status.Errorf(codes.Internal, "failed to hash password: %s", err)
 	}
 
+	email := req.GetEmail()
+	sections := strings.Split(email, "@")
+	if len(sections) == 0 {
+		return nil, status.Errorf(codes.Internal, "bad email: %s", err)
+	}
+	username := sections[0]
+
 	arg := db.CreateUserParams{
-		Name:           req.GetUsername(),
-		HashedPassword: hashedPassword,
+		Email: req.GetEmail(),
+		Name:  username,
+		HashedPassword: sql.NullString{
+			String: hashedPassword,
+			Valid:  hashedPassword != "",
+		},
 	}
 
 	user, err := server.db.CreateUser(ctx, arg)
@@ -48,8 +61,8 @@ func (server *Server) CreateUser(ctx context.Context, req *pb.CreateUserRequest)
 }
 
 func validateCreateUserRequest(req *pb.CreateUserRequest) (violations []*errdetails.BadRequest_FieldViolation) {
-	if err := validator.ValidateUsername(req.GetUsername()); err != nil {
-		violations = append(violations, fieldViolation("username", err))
+	if err := validator.ValidateEmail(req.GetEmail()); err != nil {
+		violations = append(violations, fieldViolation("email", err))
 	}
 
 	if err := validator.ValidatePassword(req.GetPassword()); err != nil {

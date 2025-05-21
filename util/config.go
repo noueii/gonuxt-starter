@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 )
 
 type Config struct {
@@ -28,8 +30,13 @@ type Config struct {
 	TokenSymmetricKey    string
 	TokenAccessDuration  time.Duration
 	TokenRefreshDuration time.Duration
+	OAuth                OAuth
 	CORSAllowedOrigins   []string
 	Environment          ENV
+}
+
+type OAuth struct {
+	Google oauth2.Config
 }
 
 type ENV string
@@ -170,6 +177,30 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 
 	corsAllowedOrigins := strings.Split(corsAllowedOriginsString, ",")
 
+	googleOAuthClientID, ok := envars["GOOGLE_OAUTH_CLIENT_ID"]
+
+	if !ok || len(googleOAuthClientID) == 0 {
+		return nil, fmt.Errorf("%s environment variable 'GOOGLE_OAUTH_CLIENT_ID' not found", env)
+	}
+
+	googleOAuthClientSecret, ok := envars["GOOGLE_OAUTH_CLIENT_SECRET"]
+
+	if !ok || len(googleOAuthClientSecret) == 0 {
+		return nil, fmt.Errorf("%s environment variable 'GOOGLE_OAUTH_CLIENT_SECRET' not found", env)
+	}
+
+	googleOauthConfig := &oauth2.Config{
+		ClientID:     googleOAuthClientID,
+		ClientSecret: googleOAuthClientSecret,
+		RedirectURL:  "http://localhost:8080/auth/google/callback",
+		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
+		Endpoint:     google.Endpoint,
+	}
+
+	oAuth := OAuth{
+		Google: *googleOauthConfig,
+	}
+
 	return &Config{
 		DbDriver:             dbDriver,
 		DbUser:               dbUser,
@@ -191,6 +222,7 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 		TokenRefreshDuration: tokenRefreshDuration,
 		CORSAllowedOrigins:   corsAllowedOrigins,
 		Environment:          env,
+		OAuth:                oAuth,
 	}, nil
 }
 

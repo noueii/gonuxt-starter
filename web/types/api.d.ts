@@ -4,6 +4,38 @@
  */
 
 export interface paths {
+    "/auth/google": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GoNuxt_GoogleLogin"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/google/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GoNuxt_GoogleCallback"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/create_user": {
         parameters: {
             query?: never;
@@ -89,14 +121,20 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         pbCreateUserRequest: {
-            username?: string;
+            email?: string;
             password?: string;
         };
         pbCreateUserResponse: {
             user?: components["schemas"]["pbUser"];
         };
+        pbGoogleCallbackResponse: {
+            jwt_token?: string;
+        };
+        pbGoogleLoginResponse: {
+            redirect_url?: string;
+        };
         pbLoginUserRequest: {
-            username?: string;
+            email?: string;
             password?: string;
         };
         pbLoginUserResponse: {
@@ -113,18 +151,28 @@ export interface components {
             access_token?: string;
             /** Format: date-time */
             access_token_expires_at?: string;
+            user?: components["schemas"]["pbUser"];
+            session?: components["schemas"]["pbSession"];
+        };
+        pbSession: {
+            id?: string;
+            /** Format: date-time */
+            expires_at?: string;
         };
         pbUpdateUserRequest: {
+            id?: string;
             username?: string;
             password?: string;
             /** Format: int32 */
             balance?: number;
+            role?: string;
         };
         pbUpdateUserResponse: {
             user?: components["schemas"]["pbUser"];
         };
         pbUser: {
             id?: string;
+            email?: string;
             username?: string;
             /** Format: date-time */
             created_at?: string;
@@ -154,6 +202,67 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    GoNuxt_GoogleLogin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A successful response. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["pbGoogleLoginResponse"];
+                };
+            };
+            /** @description An unexpected error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["rpcStatus"];
+                };
+            };
+        };
+    };
+    GoNuxt_GoogleCallback: {
+        parameters: {
+            query?: {
+                code?: string;
+                state?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description A successful response. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["pbGoogleCallbackResponse"];
+                };
+            };
+            /** @description An unexpected error response. */
+            default: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["rpcStatus"];
+                };
+            };
+        };
+    };
     GoNuxt_CreateUser: {
         parameters: {
             query?: never;

@@ -17,7 +17,7 @@ import (
 
 func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (*pb.LoginUserResponse, error) {
 
-	user, err := server.db.GetUserByName(ctx, req.GetUsername())
+	user, err := server.db.GetUserByEmail(ctx, req.GetEmail())
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -27,16 +27,20 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		return nil, status.Errorf(codes.Internal, "%s", err)
 	}
 
-	if err = util.CheckPassword(req.GetPassword(), user.HashedPassword); err != nil {
+	if !user.HashedPassword.Valid {
+		return nil, status.Errorf(codes.Internal, "CRITICAL: Missing user password. Contact support. %s", err)
+	}
+
+	if err = util.CheckPassword(req.GetPassword(), user.HashedPassword.String); err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "authentication failed: %s", err)
 	}
 
-	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.Name, user.Role, server.config.TokenAccessDuration)
+	accessToken, accessPayload, err := server.tokenMaker.CreateToken(user.ID, user.Email, user.Name, user.Role, server.config.TokenAccessDuration)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create access token: %s", err)
 	}
 
-	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(user.Name, user.Role, server.config.TokenRefreshDuration)
+	refreshToken, refreshPayload, err := server.tokenMaker.CreateToken(user.ID, user.Email, user.Name, user.Role, server.config.TokenRefreshDuration)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to create refresh token: %s", err)
 	}

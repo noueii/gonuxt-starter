@@ -47,4 +47,30 @@ service GoNuxt {
     };
   }
 
+  rpc GoogleLogin(GoogleLoginRequest) returns (GoogleLoginResponse) {
+    option (google.api.http) = {
+      get: "/auth/google"
+    };
+  }
+
+  rpc GoogleCallback(GoogleCallbackRequest) returns (GoogleCallbackResponse) {
+    option (google.api.http) = {
+      get: "/auth/google/callback"
+    };
+  }
+
+}
+
+message GoogleLoginRequest {}
+message GoogleLoginResponse{
+  string redirect_url = 1;
+}
+
+message GoogleCallbackRequest {
+  string code = 1;
+  string state = 2;
+}
+
+message GoogleCallbackResponse {
+  string jwt_token = 1;
 }
