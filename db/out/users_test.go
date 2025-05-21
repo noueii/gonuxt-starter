@@ -19,8 +19,12 @@ func createRandomUser(t *testing.T) User {
 	require.NoError(t, err)
 
 	params := CreateUserParams{
-		Name:           util.RandomString(10),
-		HashedPassword: hashedPassword,
+		Name:  util.RandomString(10),
+		Email: util.RandomEmail(),
+		HashedPassword: sql.NullString{
+			String: hashedPassword,
+			Valid:  true,
+		},
 	}
 
 	user, err := testQueries.CreateUser(context.Background(), params)
@@ -28,6 +32,7 @@ func createRandomUser(t *testing.T) User {
 	require.NotEmpty(t, user)
 	require.Equal(t, params.Name, user.Name)
 	require.Equal(t, int32(0), user.Balance)
+	require.Equal(t, params.Email, user.Email)
 	require.NotZero(t, user.ID)
 	require.NotZero(t, user.CreatedAt)
 	require.NotZero(t, user.UpdatedAt)
@@ -77,12 +82,17 @@ func TestUpdateUserByName(t *testing.T) {
 
 	newPassword := util.RandomString(10)
 	newHashedPassword, err := util.HashPassword(newPassword)
+	newUsername := util.RandomString(8)
 	require.NoError(t, err)
 
 	newBalance := int32(util.RandomInt(0, 100))
 
-	updatedUser, err := testQueries.UpdateUserByName(context.Background(), UpdateUserByNameParams{
-		Name: createdUser.Name,
+	updatedUser, err := testQueries.UpdateUserById(context.Background(), UpdateUserByIdParams{
+		ID: createdUser.ID,
+		Name: sql.NullString{
+			String: newUsername,
+			Valid:  true,
+		},
 		HashedPassword: sql.NullString{
 			String: newHashedPassword,
 			Valid:  true,
@@ -94,6 +104,7 @@ func TestUpdateUserByName(t *testing.T) {
 	})
 
 	require.NoError(t, err)
-	require.Equal(t, updatedUser.HashedPassword, newHashedPassword)
+	require.Equal(t, updatedUser.HashedPassword.String, newHashedPassword)
 	require.Equal(t, updatedUser.Balance, newBalance)
+	require.Equal(t, updatedUser.Name, newUsername)
 }
