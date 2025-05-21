@@ -192,7 +192,7 @@ func LoadConfig(env ENV, fp ...string) (*Config, error) {
 	googleOauthConfig := &oauth2.Config{
 		ClientID:     googleOAuthClientID,
 		ClientSecret: googleOAuthClientSecret,
-		RedirectURL:  "http://localhost:8080/auth/google/callback",
+		RedirectURL:  "http://localhost:8080/v1/auth/google/callback",
 		Scopes:       []string{"https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile"},
 		Endpoint:     google.Endpoint,
 	}

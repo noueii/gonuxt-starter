@@ -6,7 +6,7 @@ CREATE TABLE users(
 	updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
 	name TEXT NOT NULL,
 	email TEXT UNIQUE NOT NULL,
-	email_verified BOOL DEFAULT FALSE,
+	email_verified BOOL NOT NULL DEFAULT FALSE,
 	hashed_password TEXT
 );
 

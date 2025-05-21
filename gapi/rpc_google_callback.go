@@ -50,8 +50,9 @@ func (server *Server) GoogleCallback(ctx context.Context, req *pb.GoogleCallback
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			args := db.CreateUserParams{
-				Email: userInfo.Email,
-				Name:  userInfo.Name,
+				Email:         userInfo.Email,
+				EmailVerified: true,
+				Name:          userInfo.Name,
 			}
 
 			user, err = server.db.CreateUser(ctx, args)
@@ -136,7 +137,7 @@ func (server *Server) GoogleCallback(ctx context.Context, req *pb.GoogleCallback
 		http.SetCookie(w, &http.Cookie{
 			Name:     "refresh_token",
 			Value:    refreshToken,
-			Path:     "/v1/refresh_token",
+			Path:     "/v1/token/refresh",
 			HttpOnly: true,
 			Secure:   secure,
 			SameSite: sameSite,

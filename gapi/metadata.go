@@ -2,6 +2,7 @@ package gapi
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -48,7 +49,9 @@ func (server *Server) getMetadata(ctx context.Context) *Metadata {
 		}
 
 		if cookies := metadataFromContext.Get(cookie); len(cookies) > 0 {
+			fmt.Println(cookies)
 			parsed := parseCookieHeader(cookies[0])
+
 			md.AccessToken = "bearer " + parsed[cookieAccessToken]
 			md.RefreshToken = "bearer " + parsed[cookieRefreshToken]
 		}
@@ -71,6 +74,7 @@ func parseCookieHeader(header string) map[string]string {
 	result := make(map[string]string)
 
 	cookiePairs := strings.Split(header, ";")
+	fmt.Println(cookiePairs)
 	for _, pair := range cookiePairs {
 		kv := strings.SplitN(strings.TrimSpace(pair), "=", 2)
 		if len(kv) == 2 {

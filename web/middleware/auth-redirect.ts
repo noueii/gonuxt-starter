@@ -1,10 +1,11 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const pinia = usePinia()
-  const { refresh } = useAuthStore(pinia)
-  await refresh()
+  const auth = useAuthStore(pinia)
 
-  const { loggedIn } = useAuthStore(pinia)
-  if (loggedIn) {
+  const { loggedIn } = storeToRefs(auth)
+  await auth.refresh()
+
+  if (loggedIn.value) {
     return navigateTo('/')
   }
 })

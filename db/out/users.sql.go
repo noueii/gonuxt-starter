@@ -14,20 +14,26 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users(
-	email, name, hashed_password
+	email, email_verified, name, hashed_password
 ) VALUES (
-	$1, $2, $3
+	$1, $2, $3, $4
 ) RETURNING id, role, created_at, updated_at, name, email, email_verified, hashed_password, balance
 `
 
 type CreateUserParams struct {
 	Email          string         `json:"email"`
+	EmailVerified  bool           `json:"email_verified"`
 	Name           string         `json:"name"`
 	HashedPassword sql.NullString `json:"hashed_password"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.queryRow(ctx, q.createUserStmt, createUser, arg.Email, arg.Name, arg.HashedPassword)
+	row := q.queryRow(ctx, q.createUserStmt, createUser,
+		arg.Email,
+		arg.EmailVerified,
+		arg.Name,
+		arg.HashedPassword,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,

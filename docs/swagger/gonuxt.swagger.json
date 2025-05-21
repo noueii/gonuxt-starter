@@ -6,6 +6,9 @@
   },
   "tags": [
     {
+      "name": "Auth"
+    },
+    {
       "name": "GoNuxt"
     }
   ],
@@ -16,9 +19,73 @@
     "application/json"
   ],
   "paths": {
-    "/auth/google": {
+    "/v1/auth/email/create": {
+      "post": {
+        "operationId": "Auth_CreateUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbCreateUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbCreateUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/email/login": {
+      "post": {
+        "operationId": "Auth_LoginUser",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbLoginUserResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbLoginUserRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Auth"
+        ]
+      }
+    },
+    "/v1/auth/google": {
       "get": {
-        "operationId": "GoNuxt_GoogleLogin",
+        "operationId": "Auth_GoogleLogin",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -34,13 +101,13 @@
           }
         },
         "tags": [
-          "GoNuxt"
+          "Auth"
         ]
       }
     },
-    "/auth/google/callback": {
+    "/v1/auth/google/callback": {
       "get": {
-        "operationId": "GoNuxt_GoogleCallback",
+        "operationId": "Auth_GoogleCallback",
         "responses": {
           "200": {
             "description": "A successful response.",
@@ -70,75 +137,11 @@
           }
         ],
         "tags": [
-          "GoNuxt"
+          "Auth"
         ]
       }
     },
-    "/v1/create_user": {
-      "post": {
-        "operationId": "GoNuxt_CreateUser",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbCreateUserResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbCreateUserRequest"
-            }
-          }
-        ],
-        "tags": [
-          "GoNuxt"
-        ]
-      }
-    },
-    "/v1/login_user": {
-      "post": {
-        "operationId": "GoNuxt_LoginUser",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbLoginUserResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/pbLoginUserRequest"
-            }
-          }
-        ],
-        "tags": [
-          "GoNuxt"
-        ]
-      }
-    },
-    "/v1/refresh_token": {
+    "/v1/token/refresh": {
       "get": {
         "operationId": "GoNuxt_RefreshToken",
         "responses": {
@@ -160,7 +163,29 @@
         ]
       }
     },
-    "/v1/update_user": {
+    "/v1/token/verify": {
+      "get": {
+        "operationId": "GoNuxt_VerifyToken",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbVerifyTokenResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "GoNuxt"
+        ]
+      }
+    },
+    "/v1/user": {
       "patch": {
         "operationId": "GoNuxt_UpdateUser",
         "responses": {
@@ -187,28 +212,6 @@
             }
           }
         ],
-        "tags": [
-          "GoNuxt"
-        ]
-      }
-    },
-    "/v1/verify_token": {
-      "get": {
-        "operationId": "GoNuxt_VerifyToken",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/pbVerifyTokenResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
         "tags": [
           "GoNuxt"
         ]

@@ -41,7 +41,7 @@ export const useAuthStore = defineStore('auth', {
 
       if (!email || !password || email.length === 0 || password.length === 0) return
 
-      const { response, error, data } = await $apiClient.POST('/v1/login_user', {
+      const { response, error, data } = await $apiClient.POST('/v1/auth/email/login', {
         body: {
           email, password
         }
@@ -98,7 +98,7 @@ export const useAuthStore = defineStore('auth', {
       const toast = useToast()
       if (!email || !password || email.length === 0 || password.length === 0 || password !== confirmPassword) return
 
-      const { response, error } = await $apiClient.POST('/v1/create_user', {
+      const { response, error } = await $apiClient.POST('/v1/auth/email/create', {
         body: {
           email, password
         }
@@ -124,7 +124,7 @@ export const useAuthStore = defineStore('auth', {
 
     async refresh(): Promise<void> {
       const { $apiClient } = useNuxtApp()
-      const { response, error, data } = await $apiClient.GET("/v1/refresh_token")
+      const { response, error, data } = await $apiClient.GET("/v1/token/refresh")
       //const toast = useToast()
       if (error) {
         return
@@ -150,7 +150,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async verify(): Promise<void> {
       const { $apiClient } = useNuxtApp()
-      const { response, data, error } = await $apiClient.GET('/v1/verify_token')
+      const { response, data, error } = await $apiClient.GET('/v1/token/verify')
 
       if (error) {
         this.session = undefined

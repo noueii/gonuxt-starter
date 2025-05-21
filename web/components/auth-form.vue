@@ -10,7 +10,7 @@ const { refresh, loggedIn, user, login, register } = useAuthStore()
 const variant = ref("signin")
 
 async function handleGoogle() {
-  const { data, error } = await $apiClient.GET('/auth/google')
+  const { data, error } = await $apiClient.GET('/v1/auth/google')
   if (error) {
     return
   }

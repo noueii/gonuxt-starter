@@ -6,6 +6,6 @@ definePageMeta({
 
 <template>
   <div>
-    Hello
+    Loading...
   </div>
 </template>

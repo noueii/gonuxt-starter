@@ -77,8 +77,7 @@ var File_rpc_verify_token_proto protoreflect.FileDescriptor
 
 const file_rpc_verify_token_proto_rawDesc = "" +
 	"\n" +
-	"\x16rpc_verify_token.proto\x12\x02pb\x1a\rsession.proto\x1a\n" +
-	"user.proto\"B\n" +
+	"\x16rpc_verify_token.proto\x12\x02pb\"B\n" +
 	"\x13VerifyTokenResponse\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\tR\x06userId\x12\x12\n" +
 	"\x04role\x18\x02 \x01(\tR\x04roleB%Z#github.com/noueii/gonuxt-starter/pbb\x06proto3"
@@ -112,8 +111,6 @@ func file_rpc_verify_token_proto_init() {
 	if File_rpc_verify_token_proto != nil {
 		return
 	}
-	file_session_proto_init()
-	file_user_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

@@ -106,6 +106,7 @@ func runGRPCServer(ctx context.Context, waitGroup *errgroup.Group, config *util.
 	grpcLogger := grpc.UnaryInterceptor(gapi.GRPCLogger)
 	grpcServer := grpc.NewServer(grpcLogger)
 	pb.RegisterGoNuxtServer(grpcServer, server)
+	pb.RegisterAuthServer(grpcServer, server)
 	reflection.Register(grpcServer)
 
 	listener, err := net.Listen("tcp", config.GRPCAddr)
@@ -159,6 +160,12 @@ func runGatewayServer(ctx context.Context, waitGroup *errgroup.Group, config *ut
 	err = pb.RegisterGoNuxtHandlerServer(ctx, grpcMux, server)
 	if err != nil {
 		log.Fatal().Err(err).Msg("cannot register handler server:")
+	}
+
+	err = pb.RegisterAuthHandlerServer(ctx, grpcMux, server)
+	if err != nil {
+		log.Fatal().Err(err).Msg("cannot register handler server:")
+
 	}
 
 	mux := http.NewServeMux()

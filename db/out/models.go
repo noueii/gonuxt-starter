@@ -29,7 +29,7 @@ type User struct {
 	UpdatedAt      time.Time      `json:"updated_at"`
 	Name           string         `json:"name"`
 	Email          string         `json:"email"`
-	EmailVerified  sql.NullBool   `json:"email_verified"`
+	EmailVerified  bool           `json:"email_verified"`
 	HashedPassword sql.NullString `json:"hashed_password"`
 	Balance        int32          `json:"balance"`
 }

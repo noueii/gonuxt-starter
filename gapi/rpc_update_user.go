@@ -27,7 +27,8 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 		return nil, unauthenticatedError(err)
 	}
 
-	if authPayload.Role != util.AdminRole && authPayload.ID.String() != req.GetId() {
+	if authPayload.Role != util.AdminRole && authPayload.UserID.String() != req.GetId() {
+
 		return nil, status.Errorf(codes.PermissionDenied, "cannot update other user's data")
 	}
 
@@ -53,6 +54,13 @@ func (server *Server) UpdateUser(ctx context.Context, req *pb.UpdateUserRequest)
 
 		arg.HashedPassword = sql.NullString{
 			String: hashedPassword,
+			Valid:  true,
+		}
+	}
+
+	if req.GetUsername() != "" {
+		arg.Name = sql.NullString{
+			String: req.GetUsername(),
 			Valid:  true,
 		}
 	}

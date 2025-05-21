@@ -12,7 +12,6 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
-	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -23,254 +22,36 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type GoogleLoginRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GoogleLoginRequest) Reset() {
-	*x = GoogleLoginRequest{}
-	mi := &file_service_gonuxt_starter_proto_msgTypes[0]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GoogleLoginRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GoogleLoginRequest) ProtoMessage() {}
-
-func (x *GoogleLoginRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_service_gonuxt_starter_proto_msgTypes[0]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GoogleLoginRequest.ProtoReflect.Descriptor instead.
-func (*GoogleLoginRequest) Descriptor() ([]byte, []int) {
-	return file_service_gonuxt_starter_proto_rawDescGZIP(), []int{0}
-}
-
-type GoogleLoginResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	RedirectUrl   string                 `protobuf:"bytes,1,opt,name=redirect_url,json=redirectUrl,proto3" json:"redirect_url,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GoogleLoginResponse) Reset() {
-	*x = GoogleLoginResponse{}
-	mi := &file_service_gonuxt_starter_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GoogleLoginResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GoogleLoginResponse) ProtoMessage() {}
-
-func (x *GoogleLoginResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_service_gonuxt_starter_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GoogleLoginResponse.ProtoReflect.Descriptor instead.
-func (*GoogleLoginResponse) Descriptor() ([]byte, []int) {
-	return file_service_gonuxt_starter_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *GoogleLoginResponse) GetRedirectUrl() string {
-	if x != nil {
-		return x.RedirectUrl
-	}
-	return ""
-}
-
-type GoogleCallbackRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Code          string                 `protobuf:"bytes,1,opt,name=code,proto3" json:"code,omitempty"`
-	State         string                 `protobuf:"bytes,2,opt,name=state,proto3" json:"state,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GoogleCallbackRequest) Reset() {
-	*x = GoogleCallbackRequest{}
-	mi := &file_service_gonuxt_starter_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GoogleCallbackRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GoogleCallbackRequest) ProtoMessage() {}
-
-func (x *GoogleCallbackRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_service_gonuxt_starter_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GoogleCallbackRequest.ProtoReflect.Descriptor instead.
-func (*GoogleCallbackRequest) Descriptor() ([]byte, []int) {
-	return file_service_gonuxt_starter_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *GoogleCallbackRequest) GetCode() string {
-	if x != nil {
-		return x.Code
-	}
-	return ""
-}
-
-func (x *GoogleCallbackRequest) GetState() string {
-	if x != nil {
-		return x.State
-	}
-	return ""
-}
-
-type GoogleCallbackResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	JwtToken      string                 `protobuf:"bytes,1,opt,name=jwt_token,json=jwtToken,proto3" json:"jwt_token,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *GoogleCallbackResponse) Reset() {
-	*x = GoogleCallbackResponse{}
-	mi := &file_service_gonuxt_starter_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *GoogleCallbackResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GoogleCallbackResponse) ProtoMessage() {}
-
-func (x *GoogleCallbackResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_service_gonuxt_starter_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GoogleCallbackResponse.ProtoReflect.Descriptor instead.
-func (*GoogleCallbackResponse) Descriptor() ([]byte, []int) {
-	return file_service_gonuxt_starter_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *GoogleCallbackResponse) GetJwtToken() string {
-	if x != nil {
-		return x.JwtToken
-	}
-	return ""
-}
-
 var File_service_gonuxt_starter_proto protoreflect.FileDescriptor
 
 const file_service_gonuxt_starter_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservice_gonuxt_starter.proto\x12\x02pb\x1a\x15rpc_create_user.proto\x1a\x14rpc_login_user.proto\x1a\x15rpc_update_user.proto\x1a\x17rpc_refresh_token.proto\x1a\x16rpc_verify_token.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\"\x14\n" +
-	"\x12GoogleLoginRequest\"8\n" +
-	"\x13GoogleLoginResponse\x12!\n" +
-	"\fredirect_url\x18\x01 \x01(\tR\vredirectUrl\"A\n" +
-	"\x15GoogleCallbackRequest\x12\x12\n" +
-	"\x04code\x18\x01 \x01(\tR\x04code\x12\x14\n" +
-	"\x05state\x18\x02 \x01(\tR\x05state\"5\n" +
-	"\x16GoogleCallbackResponse\x12\x1b\n" +
-	"\tjwt_token\x18\x01 \x01(\tR\bjwtToken2\x84\x05\n" +
-	"\x06GoNuxt\x12W\n" +
+	"\x1cservice_gonuxt_starter.proto\x12\x02pb\x1a\x15rpc_update_user.proto\x1a\x17rpc_refresh_token.proto\x1a\x16rpc_verify_token.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto2\x91\x02\n" +
+	"\x06GoNuxt\x12P\n" +
 	"\n" +
-	"CreateUser\x12\x15.pb.CreateUserRequest\x1a\x16.pb.CreateUserResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*\"\x0f/v1/create_user\x12S\n" +
-	"\tLoginUser\x12\x14.pb.LoginUserRequest\x1a\x15.pb.LoginUserResponse\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/login_user\x12W\n" +
-	"\n" +
-	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x1a\x82\xd3\xe4\x93\x02\x14:\x01*2\x0f/v1/update_user\x12[\n" +
-	"\fRefreshToken\x12\x16.google.protobuf.Empty\x1a\x18.pb.RefreshTokenResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/refresh_token\x12X\n" +
-	"\vVerifyToken\x12\x16.google.protobuf.Empty\x1a\x17.pb.VerifyTokenResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/v1/verify_token\x12T\n" +
-	"\vGoogleLogin\x12\x16.pb.GoogleLoginRequest\x1a\x17.pb.GoogleLoginResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/auth/google\x12f\n" +
-	"\x0eGoogleCallback\x12\x19.pb.GoogleCallbackRequest\x1a\x1a.pb.GoogleCallbackResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/auth/google/callbackB%Z#github.com/noueii/gonuxt-starter/pbb\x06proto3"
+	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x13\x82\xd3\xe4\x93\x02\r:\x01*2\b/v1/user\x12[\n" +
+	"\fRefreshToken\x12\x16.google.protobuf.Empty\x1a\x18.pb.RefreshTokenResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/token/refresh\x12X\n" +
+	"\vVerifyToken\x12\x16.google.protobuf.Empty\x1a\x17.pb.VerifyTokenResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/v1/token/verifyB%Z#github.com/noueii/gonuxt-starter/pbb\x06proto3"
 
-var (
-	file_service_gonuxt_starter_proto_rawDescOnce sync.Once
-	file_service_gonuxt_starter_proto_rawDescData []byte
-)
-
-func file_service_gonuxt_starter_proto_rawDescGZIP() []byte {
-	file_service_gonuxt_starter_proto_rawDescOnce.Do(func() {
-		file_service_gonuxt_starter_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_service_gonuxt_starter_proto_rawDesc), len(file_service_gonuxt_starter_proto_rawDesc)))
-	})
-	return file_service_gonuxt_starter_proto_rawDescData
-}
-
-var file_service_gonuxt_starter_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_service_gonuxt_starter_proto_goTypes = []any{
-	(*GoogleLoginRequest)(nil),     // 0: pb.GoogleLoginRequest
-	(*GoogleLoginResponse)(nil),    // 1: pb.GoogleLoginResponse
-	(*GoogleCallbackRequest)(nil),  // 2: pb.GoogleCallbackRequest
-	(*GoogleCallbackResponse)(nil), // 3: pb.GoogleCallbackResponse
-	(*CreateUserRequest)(nil),      // 4: pb.CreateUserRequest
-	(*LoginUserRequest)(nil),       // 5: pb.LoginUserRequest
-	(*UpdateUserRequest)(nil),      // 6: pb.UpdateUserRequest
-	(*emptypb.Empty)(nil),          // 7: google.protobuf.Empty
-	(*CreateUserResponse)(nil),     // 8: pb.CreateUserResponse
-	(*LoginUserResponse)(nil),      // 9: pb.LoginUserResponse
-	(*UpdateUserResponse)(nil),     // 10: pb.UpdateUserResponse
-	(*RefreshTokenResponse)(nil),   // 11: pb.RefreshTokenResponse
-	(*VerifyTokenResponse)(nil),    // 12: pb.VerifyTokenResponse
+	(*UpdateUserRequest)(nil),    // 0: pb.UpdateUserRequest
+	(*emptypb.Empty)(nil),        // 1: google.protobuf.Empty
+	(*UpdateUserResponse)(nil),   // 2: pb.UpdateUserResponse
+	(*RefreshTokenResponse)(nil), // 3: pb.RefreshTokenResponse
+	(*VerifyTokenResponse)(nil),  // 4: pb.VerifyTokenResponse
 }
 var file_service_gonuxt_starter_proto_depIdxs = []int32{
-	4,  // 0: pb.GoNuxt.CreateUser:input_type -> pb.CreateUserRequest
-	5,  // 1: pb.GoNuxt.LoginUser:input_type -> pb.LoginUserRequest
-	6,  // 2: pb.GoNuxt.UpdateUser:input_type -> pb.UpdateUserRequest
-	7,  // 3: pb.GoNuxt.RefreshToken:input_type -> google.protobuf.Empty
-	7,  // 4: pb.GoNuxt.VerifyToken:input_type -> google.protobuf.Empty
-	0,  // 5: pb.GoNuxt.GoogleLogin:input_type -> pb.GoogleLoginRequest
-	2,  // 6: pb.GoNuxt.GoogleCallback:input_type -> pb.GoogleCallbackRequest
-	8,  // 7: pb.GoNuxt.CreateUser:output_type -> pb.CreateUserResponse
-	9,  // 8: pb.GoNuxt.LoginUser:output_type -> pb.LoginUserResponse
-	10, // 9: pb.GoNuxt.UpdateUser:output_type -> pb.UpdateUserResponse
-	11, // 10: pb.GoNuxt.RefreshToken:output_type -> pb.RefreshTokenResponse
-	12, // 11: pb.GoNuxt.VerifyToken:output_type -> pb.VerifyTokenResponse
-	1,  // 12: pb.GoNuxt.GoogleLogin:output_type -> pb.GoogleLoginResponse
-	3,  // 13: pb.GoNuxt.GoogleCallback:output_type -> pb.GoogleCallbackResponse
-	7,  // [7:14] is the sub-list for method output_type
-	0,  // [0:7] is the sub-list for method input_type
-	0,  // [0:0] is the sub-list for extension type_name
-	0,  // [0:0] is the sub-list for extension extendee
-	0,  // [0:0] is the sub-list for field type_name
+	0, // 0: pb.GoNuxt.UpdateUser:input_type -> pb.UpdateUserRequest
+	1, // 1: pb.GoNuxt.RefreshToken:input_type -> google.protobuf.Empty
+	1, // 2: pb.GoNuxt.VerifyToken:input_type -> google.protobuf.Empty
+	2, // 3: pb.GoNuxt.UpdateUser:output_type -> pb.UpdateUserResponse
+	3, // 4: pb.GoNuxt.RefreshToken:output_type -> pb.RefreshTokenResponse
+	4, // 5: pb.GoNuxt.VerifyToken:output_type -> pb.VerifyTokenResponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_service_gonuxt_starter_proto_init() }
@@ -278,8 +59,6 @@ func file_service_gonuxt_starter_proto_init() {
 	if File_service_gonuxt_starter_proto != nil {
 		return
 	}
-	file_rpc_create_user_proto_init()
-	file_rpc_login_user_proto_init()
 	file_rpc_update_user_proto_init()
 	file_rpc_refresh_token_proto_init()
 	file_rpc_verify_token_proto_init()
@@ -289,13 +68,12 @@ func file_service_gonuxt_starter_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_service_gonuxt_starter_proto_rawDesc), len(file_service_gonuxt_starter_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_service_gonuxt_starter_proto_goTypes,
 		DependencyIndexes: file_service_gonuxt_starter_proto_depIdxs,
-		MessageInfos:      file_service_gonuxt_starter_proto_msgTypes,
 	}.Build()
 	File_service_gonuxt_starter_proto = out.File
 	file_service_gonuxt_starter_proto_goTypes = nil

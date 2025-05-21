@@ -37,10 +37,7 @@ func (server *Server) RefreshToken(ctx context.Context, _ *emptypb.Empty) (*pb.R
 	}
 
 	authHeader := values[0]
-	fmt.Println(authHeader)
-	fields := strings.Split(authHeader, " ")
-	fmt.Println(fields)
-	fmt.Println(len(fields))
+	fields := strings.Fields(authHeader)
 
 	if len(fields) < 2 {
 		return nil, fmt.Errorf("invalid authorization header format")
