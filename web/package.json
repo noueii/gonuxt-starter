@@ -8,8 +8,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "openapi:convert": "swagger2openapi ../docs/swagger/gonuxt.swagger.json -o ../docs/swagger/gonuxt.openapi.json ",
-    "client:generate": "openapi-typescript ../docs/swagger/gonuxt.openapi.json -o types/api.d.ts",
+    "openapi:convert": "swagger2openapi ../api/swagger/gonuxt.swagger.json -o ../api/swagger/gonuxt.openapi.json ",
+    "client:generate": "openapi-typescript ../api/swagger/gonuxt.openapi.json -o types/api.d.ts",
     "api:generate": "npm run openapi:convert && npm run client:generate",
     "test:ts": "tsc --noEmit"
   },

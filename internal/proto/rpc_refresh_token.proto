@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package pb;
+
+import "user.proto";
+import "session.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/noueii/gonuxt-starter/internal/pb";
+
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+  string access_token = 1;
+  google.protobuf.Timestamp access_token_expires_at = 2;
+  User user = 3;
+  Session session = 4;
+}

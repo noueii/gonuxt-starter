@@ -31,17 +31,17 @@ test:
 	go test -v -cover ./...
 
 server: 
-	go run main.go
+	go run cmd/gonuxt-starter/main.go
 
 proto:
-	rm -f pb/*.go
-	rm -f docs/swagger/*.swagger.json
-	protoc --proto_path=proto --go_out=pb --go_opt=paths=source_relative \
-	--go-grpc_out=pb --go-grpc_opt=paths=source_relative \
-	--grpc-gateway_out=pb --grpc-gateway_opt=paths=source_relative \
-	--openapiv2_out=docs/swagger --openapiv2_opt=allow_merge=true,merge_file_name=gonuxt,json_names_for_fields=false \
+	rm -f internal/pb/*.go
+	rm -f api/swagger/*.swagger.json
+	protoc --proto_path=internal/proto --go_out=internal/pb --go_opt=paths=source_relative \
+	--go-grpc_out=internal/pb --go-grpc_opt=paths=source_relative \
+	--grpc-gateway_out=internal/pb --grpc-gateway_opt=paths=source_relative \
+	--openapiv2_out=api/swagger --openapiv2_opt=allow_merge=true,merge_file_name=gonuxt,json_names_for_fields=false \
 	--experimental_allow_proto3_optional \
-	proto/*.proto
+	internal/proto/*.proto
 	(cd web && npm run api:generate)
 
 evans: 
@@ -53,6 +53,9 @@ tools:
 		tool=$$(echo $$line | cut -d'"' -f2); \
 		go install $$tool; \
 	done
+
+build: 
+	go build -o ./bin/gonuxt-starter ./cmd/gonuxt-starter
 
 godeps:
 	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest

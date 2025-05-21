@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package pb;
+
+import "user.proto";
+
+option go_package = "github.com/noueii/gonuxt-starter/internal/pb";
+
+
+message UpdateUserRequest {
+  string id = 1;
+  optional string username = 2;
+  optional string password = 3;
+  optional int32  balance = 4;
+  optional string role = 5;
+}
+
+message UpdateUserResponse {
+  User user = 1;
+}

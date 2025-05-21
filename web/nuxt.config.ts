@@ -29,5 +29,9 @@ export default defineNuxtConfig({
   },
   pinia: {
     storesDirs: ['./stores/**']
+  },
+  runtimeConfig: {
+    apiBase: process.env.API_BASE_URL || 'http://localhost:8080'
   }
+
 })

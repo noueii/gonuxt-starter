@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package pb;
+
+
+
+option go_package = "github.com/noueii/gonuxt-starter/internal/pb";
+
+message VerifyTokenResponse {
+  string user_id = 1;
+  string role = 2;
+}
