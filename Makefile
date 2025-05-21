@@ -22,10 +22,10 @@ postgresremove:
 	docker rm ${POSTGRES_CONTAINER_NAME}
 
 dbmigrateup:
-	(cd db/schema && goose ${DB_DRIVER} ${DB_URL} up)
+	(cd internal/db/schema && goose ${DB_DRIVER} ${DB_URL} up)
 
 dbmigratedown:
-	(cd db/schema && goose ${DB_DRIVER} ${DB_URL} down)
+	(cd internal/db/schema && goose ${DB_DRIVER} ${DB_URL} down)
 
 test:
 	go test -v -cover ./...
