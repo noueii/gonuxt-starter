@@ -6,6 +6,7 @@ package pb;
 import "rpc_update_user.proto";
 import "rpc_refresh_token.proto";
 import "rpc_verify_token.proto";
+import "rpc_me.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
@@ -14,6 +15,12 @@ option go_package = "github.com/noueii/gonuxt-starter/internal/pb";
 
 
 service GoNuxt {
+
+  rpc Me(MeRequest) returns (MeResponse) {
+    option(google.api.http) = {
+      get: "/v1/me"
+    };
+  }
   
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse){
     option (google.api.http) = {

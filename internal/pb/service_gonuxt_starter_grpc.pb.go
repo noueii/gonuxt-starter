@@ -20,6 +20,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	GoNuxt_Me_FullMethodName           = "/pb.GoNuxt/Me"
 	GoNuxt_UpdateUser_FullMethodName   = "/pb.GoNuxt/UpdateUser"
 	GoNuxt_RefreshToken_FullMethodName = "/pb.GoNuxt/RefreshToken"
 	GoNuxt_VerifyToken_FullMethodName  = "/pb.GoNuxt/VerifyToken"
@@ -29,6 +30,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GoNuxtClient interface {
+	Me(ctx context.Context, in *MeRequest, opts ...grpc.CallOption) (*MeResponse, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
 	RefreshToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*RefreshTokenResponse, error)
 	VerifyToken(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*VerifyTokenResponse, error)
@@ -40,6 +42,16 @@ type goNuxtClient struct {
 
 func NewGoNuxtClient(cc grpc.ClientConnInterface) GoNuxtClient {
 	return &goNuxtClient{cc}
+}
+
+func (c *goNuxtClient) Me(ctx context.Context, in *MeRequest, opts ...grpc.CallOption) (*MeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MeResponse)
+	err := c.cc.Invoke(ctx, GoNuxt_Me_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *goNuxtClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
@@ -76,6 +88,7 @@ func (c *goNuxtClient) VerifyToken(ctx context.Context, in *emptypb.Empty, opts 
 // All implementations must embed UnimplementedGoNuxtServer
 // for forward compatibility.
 type GoNuxtServer interface {
+	Me(context.Context, *MeRequest) (*MeResponse, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
 	RefreshToken(context.Context, *emptypb.Empty) (*RefreshTokenResponse, error)
 	VerifyToken(context.Context, *emptypb.Empty) (*VerifyTokenResponse, error)
@@ -89,6 +102,9 @@ type GoNuxtServer interface {
 // pointer dereference when methods are called.
 type UnimplementedGoNuxtServer struct{}
 
+func (UnimplementedGoNuxtServer) Me(context.Context, *MeRequest) (*MeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Me not implemented")
+}
 func (UnimplementedGoNuxtServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
 }
@@ -117,6 +133,24 @@ func RegisterGoNuxtServer(s grpc.ServiceRegistrar, srv GoNuxtServer) {
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&GoNuxt_ServiceDesc, srv)
+}
+
+func _GoNuxt_Me_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GoNuxtServer).Me(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: GoNuxt_Me_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GoNuxtServer).Me(ctx, req.(*MeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _GoNuxt_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -180,6 +214,10 @@ var GoNuxt_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "pb.GoNuxt",
 	HandlerType: (*GoNuxtServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Me",
+			Handler:    _GoNuxt_Me_Handler,
+		},
 		{
 			MethodName: "UpdateUser",
 			Handler:    _GoNuxt_UpdateUser_Handler,

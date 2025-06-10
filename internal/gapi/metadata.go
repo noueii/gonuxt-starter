@@ -36,6 +36,8 @@ func (server *Server) getMetadata(ctx context.Context) *Metadata {
 	md := &Metadata{}
 
 	if metadataFromContext, ok := metadata.FromIncomingContext(ctx); ok {
+		fmt.Println("found metadata")
+		fmt.Println(metadataFromContext)
 		if userAgents := metadataFromContext.Get(grpcGatewayUserAgentHeader); len(userAgents) > 0 {
 			md.UserAgent = userAgents[0]
 		}

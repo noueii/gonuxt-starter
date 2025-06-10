@@ -137,7 +137,7 @@ func (server *Server) GoogleCallback(ctx context.Context, req *pb.GoogleCallback
 		http.SetCookie(w, &http.Cookie{
 			Name:     "refresh_token",
 			Value:    refreshToken,
-			Path:     "/v1/token/refresh",
+			Path:     "/",
 			HttpOnly: true,
 			Secure:   secure,
 			SameSite: sameSite,

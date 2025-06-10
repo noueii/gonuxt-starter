@@ -31,7 +31,16 @@ func (server *Server) Logout(ctx context.Context, req *pb.LogoutRequest) (*pb.Lo
 		http.SetCookie(w, &http.Cookie{
 			Name:     "refresh_token",
 			Value:    "",
-			Path:     "/v1/token/refresh",
+			Path:     "/",
+			HttpOnly: true,
+			Secure:   secure,
+			SameSite: sameSite,
+		})
+
+		http.SetCookie(w, &http.Cookie{
+			Name:     "session",
+			Value:    "",
+			Path:     "/",
 			HttpOnly: true,
 			Secure:   secure,
 			SameSite: sameSite,
