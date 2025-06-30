@@ -31,7 +31,7 @@ func main() {
 		log.Fatal().Err(err).Msg("could not load environment")
 	}
 
-	if environment == util.Production {
+	if environment == util.Production || environment == util.Development {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	}
 

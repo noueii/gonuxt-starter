@@ -26,29 +26,34 @@ var File_service_gonuxt_starter_proto protoreflect.FileDescriptor
 
 const file_service_gonuxt_starter_proto_rawDesc = "" +
 	"\n" +
-	"\x1cservice_gonuxt_starter.proto\x12\x02pb\x1a\x15rpc_update_user.proto\x1a\x17rpc_refresh_token.proto\x1a\x16rpc_verify_token.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto2\x91\x02\n" +
-	"\x06GoNuxt\x12P\n" +
+	"\x1cservice_gonuxt_starter.proto\x12\x02pb\x1a\x15rpc_update_user.proto\x1a\x17rpc_refresh_token.proto\x1a\x16rpc_verify_token.proto\x1a\frpc_me.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto2\xc6\x02\n" +
+	"\x06GoNuxt\x123\n" +
+	"\x02Me\x12\r.pb.MeRequest\x1a\x0e.pb.MeResponse\"\x0e\x82\xd3\xe4\x93\x02\b\x12\x06/v1/me\x12P\n" +
 	"\n" +
 	"UpdateUser\x12\x15.pb.UpdateUserRequest\x1a\x16.pb.UpdateUserResponse\"\x13\x82\xd3\xe4\x93\x02\r:\x01*2\b/v1/user\x12[\n" +
 	"\fRefreshToken\x12\x16.google.protobuf.Empty\x1a\x18.pb.RefreshTokenResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/token/refresh\x12X\n" +
 	"\vVerifyToken\x12\x16.google.protobuf.Empty\x1a\x17.pb.VerifyTokenResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/v1/token/verifyB.Z,github.com/noueii/gonuxt-starter/internal/pbb\x06proto3"
 
 var file_service_gonuxt_starter_proto_goTypes = []any{
-	(*UpdateUserRequest)(nil),    // 0: pb.UpdateUserRequest
-	(*emptypb.Empty)(nil),        // 1: google.protobuf.Empty
-	(*UpdateUserResponse)(nil),   // 2: pb.UpdateUserResponse
-	(*RefreshTokenResponse)(nil), // 3: pb.RefreshTokenResponse
-	(*VerifyTokenResponse)(nil),  // 4: pb.VerifyTokenResponse
+	(*MeRequest)(nil),            // 0: pb.MeRequest
+	(*UpdateUserRequest)(nil),    // 1: pb.UpdateUserRequest
+	(*emptypb.Empty)(nil),        // 2: google.protobuf.Empty
+	(*MeResponse)(nil),           // 3: pb.MeResponse
+	(*UpdateUserResponse)(nil),   // 4: pb.UpdateUserResponse
+	(*RefreshTokenResponse)(nil), // 5: pb.RefreshTokenResponse
+	(*VerifyTokenResponse)(nil),  // 6: pb.VerifyTokenResponse
 }
 var file_service_gonuxt_starter_proto_depIdxs = []int32{
-	0, // 0: pb.GoNuxt.UpdateUser:input_type -> pb.UpdateUserRequest
-	1, // 1: pb.GoNuxt.RefreshToken:input_type -> google.protobuf.Empty
-	1, // 2: pb.GoNuxt.VerifyToken:input_type -> google.protobuf.Empty
-	2, // 3: pb.GoNuxt.UpdateUser:output_type -> pb.UpdateUserResponse
-	3, // 4: pb.GoNuxt.RefreshToken:output_type -> pb.RefreshTokenResponse
-	4, // 5: pb.GoNuxt.VerifyToken:output_type -> pb.VerifyTokenResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	0, // 0: pb.GoNuxt.Me:input_type -> pb.MeRequest
+	1, // 1: pb.GoNuxt.UpdateUser:input_type -> pb.UpdateUserRequest
+	2, // 2: pb.GoNuxt.RefreshToken:input_type -> google.protobuf.Empty
+	2, // 3: pb.GoNuxt.VerifyToken:input_type -> google.protobuf.Empty
+	3, // 4: pb.GoNuxt.Me:output_type -> pb.MeResponse
+	4, // 5: pb.GoNuxt.UpdateUser:output_type -> pb.UpdateUserResponse
+	5, // 6: pb.GoNuxt.RefreshToken:output_type -> pb.RefreshTokenResponse
+	6, // 7: pb.GoNuxt.VerifyToken:output_type -> pb.VerifyTokenResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -62,6 +67,7 @@ func file_service_gonuxt_starter_proto_init() {
 	file_rpc_update_user_proto_init()
 	file_rpc_refresh_token_proto_init()
 	file_rpc_verify_token_proto_init()
+	file_rpc_me_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

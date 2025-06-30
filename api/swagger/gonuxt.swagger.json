@@ -163,6 +163,28 @@
         ]
       }
     },
+    "/v1/me": {
+      "get": {
+        "operationId": "GoNuxt_Me",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/pbMeResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "GoNuxt"
+        ]
+      }
+    },
     "/v1/token/refresh": {
       "get": {
         "operationId": "GoNuxt_RefreshToken",
@@ -314,6 +336,21 @@
     },
     "pbLogoutResponse": {
       "type": "object"
+    },
+    "pbMeResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "user": {
+          "$ref": "#/definitions/pbUser"
+        }
+      }
     },
     "pbRefreshTokenResponse": {
       "type": "object",

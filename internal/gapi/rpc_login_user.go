@@ -94,7 +94,7 @@ func (server *Server) LoginUser(ctx context.Context, req *pb.LoginUserRequest) (
 		http.SetCookie(w, &http.Cookie{
 			Name:     "refresh_token",
 			Value:    refreshToken,
-			Path:     "/v1/token/refresh",
+			Path:     "/",
 			HttpOnly: true,
 			Secure:   secure,
 			SameSite: sameSite,
